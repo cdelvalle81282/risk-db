@@ -457,6 +457,51 @@
         }
 
         /* ============================================
+           TRADER EDITORIALS PANEL
+           ============================================ */
+        .trader-editorials {
+            border-top: 1px solid var(--border-green);
+            padding: 8px 12px;
+        }
+        .trader-editorials-header {
+            font-size: 11px;
+            color: var(--text-amber);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .trader-editorials-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .trader-editorial-item {
+            flex: 1 1 calc(50% - 6px);
+            min-width: 280px;
+        }
+        .trader-editorial-item a {
+            display: block;
+            color: var(--text-green);
+            text-decoration: none;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            padding: 4px 6px;
+            border-left: 2px solid var(--border-green);
+            transition: border-color 0.2s, color 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .trader-editorial-item a:hover {
+            color: var(--text-amber);
+            border-color: var(--text-amber);
+        }
+        .trader-editorial-item .ed-author {
+            color: var(--text-dim);
+            font-size: 8px;
+            margin-left: 4px;
+        }
+
+        /* ============================================
            INVESTMENT IMPACT MATRIX
            ============================================ */
         .impact-matrix {
@@ -959,6 +1004,14 @@
                 <div class="impact-item" id="avoid-4">--</div>
             </div>
 
+        </div>
+    </section>
+
+    <!-- ========== TRADER EDITORIALS ========== -->
+    <section class="trader-editorials">
+        <div class="trader-editorials-header">WHAT THE TRADERS THINK...</div>
+        <div class="trader-editorials-grid" id="trader-editorials-grid">
+            <div class="trader-editorial-item"><a style="cursor:default; color: var(--text-dim)">LOADING INTEL...</a></div>
         </div>
     </section>
 
@@ -2311,6 +2364,39 @@
     // Fetch news on load and every 5 minutes
     fetchAllNews();
     setInterval(fetchAllNews, 300000);
+
+    // ============================================
+    // Trader Editorials Feed (from OP CMS)
+    // ============================================
+    const EDITORIAL_API = 'http://167.99.167.244/api/editorials/public-feed';
+
+    async function fetchEditorials() {
+        const grid = document.getElementById('trader-editorials-grid');
+        if (!grid) return;
+        try {
+            const resp = await fetch(EDITORIAL_API);
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+            const items = data.editorials || [];
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="trader-editorial-item"><a style="cursor:default; color: var(--text-dim)">NO EDITORIALS AVAILABLE</a></div>';
+                return;
+            }
+            grid.innerHTML = items.map(function(ed) {
+                const title = ed.title.replace(/"/g, '&quot;').replace(/</g, '&lt;');
+                const author = ed.author ? '<span class="ed-author">— ' + ed.author.replace(/</g, '&lt;') + '</span>' : '';
+                const url = ed.url || '#';
+                return '<div class="trader-editorial-item"><a href="' + url.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener" title="' + title + '">' +
+                    '> ' + title + author + '</a></div>';
+            }).join('');
+        } catch (e) {
+            console.error('Editorial feed error:', e);
+            grid.innerHTML = '<div class="trader-editorial-item"><a style="cursor:default; color: var(--text-dim)">FEED UNAVAILABLE</a></div>';
+        }
+    }
+
+    fetchEditorials();
+    setInterval(fetchEditorials, 900000);
 
     // ---- Show initializing state (Task 15) ----
     document.querySelectorAll('.panel-signal').forEach(el => {
