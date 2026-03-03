@@ -1036,7 +1036,7 @@
         oil: { green: 75, amber: 95 },
         defense: { green: 2, amber: 5 },
         vix: { green: 20, amber: 30 },
-        gold: { green: 2000, amber: 2200 },
+        gold: { green: 5000, amber: 5500 },
         treasury: { green: 0, amber: -0.5 },
         weights: { oil: 0.20, defense: 0.20, vix: 0.25, gold: 0.15, treasury: 0.20 }
     };
@@ -2245,10 +2245,10 @@
     // Mock Data Initialization (fallback defaults)
     // ============================================
     // Mock data: ~3 days of 15-min candles (simplified to key points)
-    DashboardState.live.oil = { price: 78.42, change: 1.23, changePercent: 1.59, history: [75.2,75.8,76.1,75.9,76.5,76.3,76.8,77.1,76.6,76.9,77.4,77.0,76.7,77.2,77.5,77.8,76.9,77.3,77.6,78.0,77.5,77.8,78.1,77.7,78.3,78.0,78.5,78.2,78.4,78.42] };
-    DashboardState.live.defense = { price: 445.30, change: 5.20, changePercent: 1.18, history: [438,439,440,438.5,441,440,442,441.5,443,442,441,443,444,442.5,443.5,444,443,444.5,445,443.5,444,445,444.5,445.3,444,445,445.3,444.8,445.1,445.3] };
-    DashboardState.live.vix = { price: 18.34, change: -0.82, changePercent: -4.28, history: [22.1,21.8,21.5,22.0,21.2,20.8,21.0,20.5,20.2,20.8,20.0,19.8,20.1,19.5,19.8,19.2,19.5,19.0,19.3,18.8,19.1,18.5,18.8,18.6,18.9,18.4,18.7,18.5,18.4,18.34] };
-    DashboardState.live.gold = { price: 2041.50, change: 12.30, changePercent: 0.61, history: [2020,2022,2025,2021,2028,2024,2030,2027,2032,2029,2033,2031,2035,2032,2036,2034,2038,2035,2037,2039,2036,2040,2038,2041,2039,2040,2042,2040.5,2041,2041.5] };
+    DashboardState.live.oil = { price: 72.60, change: 2.18, changePercent: 3.10, history: [68.5,69.0,68.8,69.5,69.2,70.0,69.8,70.3,70.1,70.6,70.4,70.8,70.5,71.0,70.7,71.2,71.0,71.5,71.3,71.8,71.5,72.0,71.7,72.2,72.0,72.4,72.1,72.5,72.3,72.60] };
+    DashboardState.live.defense = { price: 505.59, change: 17.85, changePercent: 3.66, history: [478,480,482,481,485,483,487,486,490,488,492,491,494,492,495,493,496,495,498,497,500,499,502,500,503,501,504,503,505,505.59] };
+    DashboardState.live.vix = { price: 20.40, change: 0.54, changePercent: 2.72, history: [18.5,18.8,18.6,19.0,18.8,19.2,19.0,19.4,19.2,19.5,19.3,19.6,19.4,19.8,19.5,19.9,19.7,20.0,19.8,20.1,19.9,20.2,20.0,20.3,20.1,20.4,20.2,20.3,20.35,20.40] };
+    DashboardState.live.gold = { price: 5350.00, change: 27.88, changePercent: 0.52, history: [5180,5195,5210,5200,5220,5215,5235,5225,5245,5240,5260,5250,5270,5265,5280,5275,5290,5285,5300,5295,5310,5305,5320,5315,5330,5325,5340,5335,5345,5350] };
     DashboardState.live.treasury = { y2: 3.38, y10: 3.97, y30: 4.64, spread: 0.59, history: [0.45,0.46,0.48,0.47,0.49,0.48,0.50,0.49,0.51,0.50,0.52,0.51,0.53,0.52,0.54,0.53,0.55,0.54,0.56,0.55,0.57,0.56,0.58,0.57,0.58,0.57,0.59,0.58,0.59,0.59] };
     recalculate(); // Render immediately with mock data
 
@@ -2318,9 +2318,9 @@
         el.style.color = 'var(--text-dim)';
     });
 
-    // ---- Live data fetch + 60s polling ----
+    // ---- Live data fetch + 15-min polling ----
     fetchAllData();
-    setInterval(fetchAllData, 60000);
+    setInterval(fetchAllData, 900000);
 
     // ---- VHS Noise Generator (optimized: 1/4 res, ~15fps) ----
     (function initNoise() {
