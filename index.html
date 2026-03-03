@@ -1311,14 +1311,150 @@
     }
 
     // ============================================
-    // Mock Data Initialization
+    // Task 8: API Data Fetching (Yahoo Finance + FRED)
+    // ============================================
+
+    // ---- CORS proxy and API key config ----
+    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+    const FRED_API_KEY = localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY';
+
+    // ---- fetchWithFallback: direct fetch, then CORS proxy ----
+    async function fetchWithFallback(url) {
+        try {
+            const resp = await fetch(url);
+            if (resp.ok) return await resp.json();
+            throw new Error('HTTP ' + resp.status);
+        } catch (e) {
+            try {
+                const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
+                if (resp.ok) return await resp.json();
+            } catch (e2) { /* fall through */ }
+            return null;
+        }
+    }
+
+    // ---- fetchYahoo: Yahoo Finance v8 chart endpoint ----
+    async function fetchYahoo(symbol) {
+        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol + '?range=1d&interval=5m';
+        return fetchWithFallback(url);
+    }
+
+    // ---- parseYahooChart: extract price/change/history from Yahoo response ----
+    function parseYahooChart(data) {
+        if (!data?.chart?.result?.[0]) return null;
+        const result = data.chart.result[0];
+        const meta = result.meta;
+        const closes = result.indicators?.quote?.[0]?.close || [];
+        const validCloses = closes.filter(c => c != null);
+        return {
+            price: meta.regularMarketPrice,
+            previousClose: meta.chartPreviousClose,
+            change: meta.regularMarketPrice - meta.chartPreviousClose,
+            changePercent: ((meta.regularMarketPrice - meta.chartPreviousClose) / meta.chartPreviousClose) * 100,
+            history: validCloses.slice(-50)
+        };
+    }
+
+    // ---- fetchFRED: FRED API series observations ----
+    async function fetchFRED(series) {
+        const url = 'https://api.stlouisfed.org/fred/series/observations?series_id=' + series +
+            '&api_key=' + FRED_API_KEY + '&file_type=json&sort_order=desc&limit=5';
+        const data = await fetchWithFallback(url);
+        if (!data?.observations?.length) return null;
+        const val = parseFloat(data.observations[0].value);
+        return isNaN(val) ? null : val;
+    }
+
+    // ---- fetchAllData: master fetch, updates DashboardState.live ----
+    async function fetchAllData() {
+        const liveIndicator = document.querySelector('.live-indicator');
+        try {
+            const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y2, y10, y30] =
+                await Promise.all([
+                    fetchYahoo('CL=F'),
+                    fetchYahoo('%5EVIX'),
+                    fetchYahoo('GC=F'),
+                    fetchYahoo('LMT'),
+                    fetchYahoo('RTX'),
+                    fetchYahoo('NOC'),
+                    fetchYahoo('GD'),
+                    fetchFRED('DGS2'),
+                    fetchFRED('DGS10'),
+                    fetchFRED('DGS30')
+                ]);
+
+            // Oil
+            const oil = parseYahooChart(oilData);
+            if (oil) Object.assign(DashboardState.live.oil, oil);
+
+            // VIX
+            const vix = parseYahooChart(vixData);
+            if (vix) Object.assign(DashboardState.live.vix, vix);
+
+            // Gold
+            const gold = parseYahooChart(goldData);
+            if (gold) Object.assign(DashboardState.live.gold, gold);
+
+            // Defense average
+            const defenseStocks = [lmtData, rtxData, nocData, gdData].map(parseYahooChart).filter(Boolean);
+            if (defenseStocks.length > 0) {
+                const avgChange = defenseStocks.reduce((sum, s) => sum + s.changePercent, 0) / defenseStocks.length;
+                const avgPrice = defenseStocks.reduce((sum, s) => sum + s.price, 0) / defenseStocks.length;
+                DashboardState.live.defense.price = avgPrice;
+                DashboardState.live.defense.changePercent = avgChange;
+                DashboardState.live.defense.change = avgChange;
+                DashboardState.live.defense.history = defenseStocks[0].history;
+            }
+
+            // Treasury
+            if (y2 != null && y10 != null) {
+                DashboardState.live.treasury.y2 = y2;
+                DashboardState.live.treasury.y10 = y10;
+                DashboardState.live.treasury.y30 = y30;
+                DashboardState.live.treasury.spread = y10 - y2;
+                DashboardState.live.treasury.history.push(y10 - y2);
+                if (DashboardState.live.treasury.history.length > 30) DashboardState.live.treasury.history.shift();
+            }
+
+            DashboardState.lastUpdate = new Date();
+            DashboardState.staleData = false;
+            liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE';
+            liveIndicator.style.color = '';
+
+            // Cache to localStorage
+            localStorage.setItem('riskTerminal_cache', JSON.stringify(DashboardState.live));
+
+        } catch (e) {
+            console.error('Fetch error:', e);
+            DashboardState.staleData = true;
+            liveIndicator.innerHTML = '⚠ STALE DATA';
+            liveIndicator.style.color = 'var(--text-red)';
+
+            // Load from cache
+            const cached = localStorage.getItem('riskTerminal_cache');
+            if (cached) {
+                try {
+                    Object.assign(DashboardState.live, JSON.parse(cached));
+                } catch(e) {}
+            }
+        }
+
+        recalculate();
+    }
+
+    // ============================================
+    // Mock Data Initialization (fallback defaults)
     // ============================================
     DashboardState.live.oil = { price: 78.42, change: 1.23, changePercent: 1.59, history: [76,77,76.5,77.8,78,78.2,78.5,78.1,78.42] };
     DashboardState.live.defense = { price: 445.30, change: 5.20, changePercent: 1.18, history: [440,442,441,443,444,445,445.3] };
     DashboardState.live.vix = { price: 18.34, change: -0.82, changePercent: -4.28, history: [20,19.5,19.2,19,18.8,18.5,18.34] };
     DashboardState.live.gold = { price: 2041.50, change: 12.30, changePercent: 0.61, history: [2030,2032,2035,2038,2040,2041,2041.5] };
     DashboardState.live.treasury = { y2: 4.82, y10: 4.31, y30: 4.48, spread: -0.51, history: [-0.3,-0.35,-0.4,-0.45,-0.48,-0.51] };
-    recalculate();
+    recalculate(); // Render immediately with mock data
+
+    // ---- Live data fetch + 60s polling ----
+    fetchAllData();
+    setInterval(fetchAllData, 60000);
 
     // ---- VHS Noise Generator ----
     (function initNoise() {
