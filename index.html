@@ -548,6 +548,42 @@
         .text-amber  { color: var(--text-amber);  text-shadow: var(--glow-amber); }
         .text-red    { color: var(--text-red);    text-shadow: var(--glow-red); }
         .text-dim    { color: var(--text-dim); }
+
+        /* ============================================
+           SCENARIO DIAL KNOBS (Task 10)
+           ============================================ */
+        .dial-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .dial-canvas {
+            width: 60px;
+            height: 60px;
+            cursor: grab;
+            flex-shrink: 0;
+        }
+        .dial-canvas:active { cursor: grabbing; }
+        .dial-info { flex: 1; }
+        .dial-knob-label {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: var(--text-green);
+            text-transform: uppercase;
+        }
+        .dial-knob-value {
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: var(--glow-green);
+            color: var(--text-green);
+        }
+        .dial-reset {
+            font-size: 8px;
+            color: var(--text-dim);
+            cursor: pointer;
+        }
+        .dial-reset:hover { color: var(--text-green); }
     </style>
 </head>
 <body>
@@ -1297,8 +1333,274 @@
         el.style.color = signals.some(s => s.zone === 'RED') ? 'var(--text-red)' : 'var(--text-amber)';
     }
 
-    // ---- Stub Functions (to be implemented in subsequent tasks) ----
-    function updateRadarColor() {}
+    // ============================================
+    // Task 9: Three.js Radar Display
+    // ============================================
+
+    let radarScene, radarCamera, radarRenderer, radarSweep, radarBlips = [];
+    let radarColor = new THREE.Color(0x33ff33);
+
+    function initRadar() {
+        const container = document.getElementById('radar-container');
+        // Remove placeholder
+        container.innerHTML = '';
+        // Re-add the ::before label via a span
+        const label = document.createElement('span');
+        label.style.cssText = 'position:absolute;top:8px;left:10px;font-size:10px;color:#0d330d;letter-spacing:2px;z-index:1;text-transform:uppercase;';
+        label.textContent = 'THREAT RADAR';
+        container.appendChild(label);
+
+        const w = container.offsetWidth;
+        const h = container.offsetHeight;
+
+        radarScene = new THREE.Scene();
+        radarCamera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+        radarCamera.position.set(0, 3, 3);
+        radarCamera.lookAt(0, 0, 0);
+
+        radarRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        radarRenderer.setSize(w, h);
+        radarRenderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(radarRenderer.domElement);
+
+        // Radar base disc
+        const baseGeo = new THREE.CylinderGeometry(1.8, 1.8, 0.05, 64);
+        const baseMat = new THREE.MeshBasicMaterial({ color: 0x0d1a0d });
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        radarScene.add(base);
+
+        // Concentric rings
+        for (let r = 0.5; r <= 1.5; r += 0.5) {
+            const ringGeo = new THREE.RingGeometry(r - 0.01, r + 0.01, 64);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x1a3a1a, side: THREE.DoubleSide });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.y = 0.03;
+            radarScene.add(ring);
+        }
+
+        // Cross hairs
+        for (let angle = 0; angle < Math.PI; angle += Math.PI / 4) {
+            const points = [
+                new THREE.Vector3(-1.8 * Math.cos(angle), 0.03, -1.8 * Math.sin(angle)),
+                new THREE.Vector3(1.8 * Math.cos(angle), 0.03, 1.8 * Math.sin(angle))
+            ];
+            const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x1a3a1a });
+            radarScene.add(new THREE.Line(lineGeo, lineMat));
+        }
+
+        // Sweep beam (triangle/wedge)
+        const sweepGeo = new THREE.CircleGeometry(1.8, 1, 0, 0.3);
+        const sweepMat = new THREE.MeshBasicMaterial({
+            color: 0x33ff33, transparent: true, opacity: 0.3, side: THREE.DoubleSide
+        });
+        radarSweep = new THREE.Mesh(sweepGeo, sweepMat);
+        radarSweep.rotation.x = -Math.PI / 2;
+        radarSweep.position.y = 0.04;
+        radarScene.add(radarSweep);
+
+        // Blips for each instrument
+        const instruments = ['oil', 'defense', 'vix', 'gold', 'treasury'];
+        const angles = [0, 1.26, 2.51, 3.77, 5.03];
+        instruments.forEach((inst, i) => {
+            const blipGeo = new THREE.SphereGeometry(0.06, 16, 16);
+            const blipMat = new THREE.MeshBasicMaterial({ color: 0x33ff33 });
+            const blip = new THREE.Mesh(blipGeo, blipMat);
+            blip.position.y = 0.06;
+            blip.userData = { instrument: inst, baseAngle: angles[i] };
+            radarScene.add(blip);
+            radarBlips.push(blip);
+        });
+
+        animateRadar();
+    }
+
+    function animateRadar() {
+        requestAnimationFrame(animateRadar);
+        radarSweep.rotation.z -= 0.025;
+        radarSweep.material.color.copy(radarColor);
+
+        radarBlips.forEach(blip => {
+            const inst = blip.userData.instrument;
+            const zone = DashboardState.zones[inst];
+            const distance = zone === 'RED' ? 1.3 : zone === 'AMBER' ? 0.8 : 0.4;
+            const angle = blip.userData.baseAngle;
+            blip.position.x = Math.cos(angle) * distance;
+            blip.position.z = Math.sin(angle) * distance;
+            const colors = { GREEN: 0x33ff33, AMBER: 0xffaa00, RED: 0xff3333 };
+            blip.material.color.setHex(colors[zone]);
+        });
+
+        radarRenderer.render(radarScene, radarCamera);
+    }
+
+    function updateRadarColor() {
+        const score = DashboardState.compositeScore;
+        if (score > 60) radarColor.setHex(0xff3333);
+        else if (score > 30) radarColor.setHex(0xffaa00);
+        else radarColor.setHex(0x33ff33);
+    }
+
+    // ============================================
+    // Task 10: Interactive Scenario Dials (2D Canvas Knobs)
+    // ============================================
+
+    const DIAL_CONFIG = [
+        { id: 'oil', label: 'OIL PRICE', min: 40, max: 150, unit: '$', key: 'oil' },
+        { id: 'conflict', label: 'CONFLICT LEVEL', min: 1, max: 10, unit: '', key: 'conflict' },
+        { id: 'sanctions', label: 'SANCTIONS', min: 1, max: 10, unit: '', key: 'sanctions' },
+        { id: 'supply', label: 'SUPPLY DISRUPT', min: 1, max: 10, unit: '', key: 'supply' }
+    ];
+
+    function initDials() {
+        const mount = document.getElementById('dials-container');
+        mount.innerHTML = ''; // Clear placeholder dials
+
+        // Add section title
+        const title = document.createElement('div');
+        title.style.cssText = 'font-size:10px;color:#0d330d;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;';
+        title.textContent = '// SCENARIO SIMULATION';
+        mount.appendChild(title);
+
+        DIAL_CONFIG.forEach(cfg => {
+            const row = document.createElement('div');
+            row.className = 'dial-row';
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'dial-canvas';
+            canvas.width = 120;
+            canvas.height = 120;
+            canvas.id = 'dial-canvas-' + cfg.id;
+
+            const info = document.createElement('div');
+            info.className = 'dial-info';
+
+            const label = document.createElement('div');
+            label.className = 'dial-knob-label';
+            label.textContent = cfg.label;
+
+            const value = document.createElement('div');
+            value.className = 'dial-knob-value';
+            value.id = 'dial-value-' + cfg.id;
+
+            const defaultVal = cfg.key === 'oil' ? (DashboardState.live.oil.price || 70) : DashboardState.scenario[cfg.key];
+            value.textContent = cfg.unit + Math.round(defaultVal);
+
+            const reset = document.createElement('div');
+            reset.className = 'dial-reset';
+            reset.textContent = '[DBL-CLICK RESET]';
+
+            info.append(label, value, reset);
+            row.append(canvas, info);
+            mount.appendChild(row);
+
+            // Angle math
+            function valueToAngle(val) { return ((val - cfg.min) / (cfg.max - cfg.min)) * 300 - 150; }
+            function angleToValue(angle) { return cfg.min + ((angle + 150) / 300) * (cfg.max - cfg.min); }
+
+            let currentAngle = valueToAngle(defaultVal);
+            drawDial(canvas, currentAngle);
+
+            // Drag interaction
+            let dragging = false, startY = 0, startAngle = 0;
+
+            canvas.addEventListener('mousedown', e => {
+                dragging = true;
+                startY = e.clientY;
+                startAngle = currentAngle;
+                e.preventDefault();
+            });
+
+            window.addEventListener('mousemove', e => {
+                if (!dragging) return;
+                const dy = startY - e.clientY;
+                currentAngle = Math.max(-150, Math.min(150, startAngle + dy * 1.5));
+                drawDial(canvas, currentAngle);
+                const val = angleToValue(currentAngle);
+                value.textContent = cfg.unit + Math.round(val);
+
+                if (cfg.key === 'oil') {
+                    DashboardState.scenario.oil = val;
+                } else {
+                    DashboardState.scenario[cfg.key] = val;
+                }
+                recalculate();
+            });
+
+            window.addEventListener('mouseup', () => { dragging = false; });
+
+            // Double-click reset
+            canvas.addEventListener('dblclick', () => {
+                if (cfg.key === 'oil') {
+                    DashboardState.scenario.oil = null;
+                    const livePrice = DashboardState.live.oil.price || 70;
+                    currentAngle = valueToAngle(livePrice);
+                    value.textContent = cfg.unit + Math.round(livePrice);
+                } else {
+                    DashboardState.scenario[cfg.key] = 1;
+                    currentAngle = -150;
+                    value.textContent = cfg.unit + '1';
+                }
+                drawDial(canvas, currentAngle);
+                recalculate();
+            });
+        });
+    }
+
+    function drawDial(canvas, angleDeg) {
+        const ctx = canvas.getContext('2d');
+        const cx = 60, cy = 60, r = 45;
+        ctx.clearRect(0, 0, 120, 120);
+
+        // Outer ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = '#1a3a1a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Tick marks
+        for (let deg = -150; deg <= 150; deg += 30) {
+            const rad = (deg - 90) * Math.PI / 180;
+            ctx.beginPath();
+            ctx.moveTo(cx + Math.cos(rad) * (r - 8), cy + Math.sin(rad) * (r - 8));
+            ctx.lineTo(cx + Math.cos(rad) * (r - 2), cy + Math.sin(rad) * (r - 2));
+            ctx.strokeStyle = '#33ff3366';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Knob body
+        const gradient = ctx.createRadialGradient(cx - 5, cy - 5, 5, cx, cy, r - 10);
+        gradient.addColorStop(0, '#2a2a2a');
+        gradient.addColorStop(1, '#111');
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 10, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Indicator line
+        const indicatorRad = (angleDeg - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(indicatorRad) * (r - 14), cy + Math.sin(indicatorRad) * (r - 14));
+        ctx.strokeStyle = '#33ff33';
+        ctx.lineWidth = 2;
+        ctx.shadowColor = '#33ff33';
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Center dot
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#33ff33';
+        ctx.fill();
+    }
 
     // ---- Master Recalculate ----
     function recalculate() {
@@ -1451,6 +1753,10 @@
     DashboardState.live.gold = { price: 2041.50, change: 12.30, changePercent: 0.61, history: [2030,2032,2035,2038,2040,2041,2041.5] };
     DashboardState.live.treasury = { y2: 4.82, y10: 4.31, y30: 4.48, spread: -0.51, history: [-0.3,-0.35,-0.4,-0.45,-0.48,-0.51] };
     recalculate(); // Render immediately with mock data
+
+    // ---- Initialize 3D Radar + Scenario Dials ----
+    initRadar();
+    initDials();
 
     // ---- Live data fetch + 60s polling ----
     fetchAllData();
