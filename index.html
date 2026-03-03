@@ -751,31 +751,7 @@
 
             <!-- Dials -->
             <div class="dials-container" id="dials-container">
-                <div class="dial">
-                    <div class="dial-label">THREAT LEVEL</div>
-                    <div class="dial-value" id="dial-threat">--</div>
-                    <div class="dial-bar"><div class="dial-bar-fill" id="dial-threat-bar"></div></div>
-                </div>
-                <div class="dial">
-                    <div class="dial-label">MARKET STRESS</div>
-                    <div class="dial-value" id="dial-stress">--</div>
-                    <div class="dial-bar"><div class="dial-bar-fill" id="dial-stress-bar"></div></div>
-                </div>
-                <div class="dial">
-                    <div class="dial-label">CONFLICT INDEX</div>
-                    <div class="dial-value" id="dial-conflict">--</div>
-                    <div class="dial-bar"><div class="dial-bar-fill" id="dial-conflict-bar"></div></div>
-                </div>
-                <div class="dial">
-                    <div class="dial-label">SANCTIONS PRESSURE</div>
-                    <div class="dial-value" id="dial-sanctions">--</div>
-                    <div class="dial-bar"><div class="dial-bar-fill" id="dial-sanctions-bar"></div></div>
-                </div>
-                <div class="dial">
-                    <div class="dial-label">SUPPLY CHAIN RISK</div>
-                    <div class="dial-value" id="dial-supply">--</div>
-                    <div class="dial-bar"><div class="dial-bar-fill" id="dial-supply-bar"></div></div>
-                </div>
+                <!-- Dials rendered by JS -->
             </div>
         </aside>
 
@@ -976,12 +952,19 @@
             const stored = localStorage.getItem('riskTerminal_thresholds');
             if (stored) {
                 const parsed = JSON.parse(stored);
-                return Object.assign({}, DEFAULT_THRESHOLDS, parsed);
+                return {
+                    oil:      Object.assign({}, DEFAULT_THRESHOLDS.oil,      parsed.oil      || {}),
+                    defense:  Object.assign({}, DEFAULT_THRESHOLDS.defense,  parsed.defense  || {}),
+                    vix:      Object.assign({}, DEFAULT_THRESHOLDS.vix,      parsed.vix      || {}),
+                    gold:     Object.assign({}, DEFAULT_THRESHOLDS.gold,     parsed.gold     || {}),
+                    treasury: Object.assign({}, DEFAULT_THRESHOLDS.treasury, parsed.treasury || {}),
+                    weights:  Object.assign({}, DEFAULT_THRESHOLDS.weights,  parsed.weights  || {})
+                };
             }
         } catch (e) {
-            console.warn('Failed to load thresholds from localStorage, using defaults:', e);
+            console.error('Failed to load thresholds:', e);
         }
-        return Object.assign({}, DEFAULT_THRESHOLDS);
+        return JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS));
     }
 
     let thresholds = loadThresholds();
@@ -1094,6 +1077,7 @@
         if (s.conflict > 1) {
             const factor = (s.conflict - 1) / 9;
             effective.defense.price *= (1 + 0.15 * factor);
+            effective.defense.changePercent += factor * 15;
             effective.oil.price *= (1 + 0.15 * factor);
             effective.gold.price *= (1 + 0.10 * factor);
             effective.vix.price += 20 * factor;
@@ -1796,7 +1780,7 @@
 
     function playGeiger() {
         if (!soundEnabled || !audioCtx) return;
-        const bufferSize = audioCtx.sampleRate * 0.02;
+        const bufferSize = Math.ceil(audioCtx.sampleRate * 0.02);
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.1;
@@ -1995,7 +1979,7 @@
 
     // ---- CORS proxy and API key config ----
     const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-    const FRED_API_KEY = localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY';
+    // FRED_API_KEY is now read dynamically inside fetchFRED()
 
     // ---- fetchWithFallback: direct fetch, then CORS proxy ----
     async function fetchWithFallback(url) {
@@ -2036,8 +2020,9 @@
 
     // ---- fetchFRED: FRED API series observations ----
     async function fetchFRED(series) {
+        const apiKey = localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY';
         const url = 'https://api.stlouisfed.org/fred/series/observations?series_id=' + series +
-            '&api_key=' + FRED_API_KEY + '&file_type=json&sort_order=desc&limit=5';
+            '&api_key=' + apiKey + '&file_type=json&sort_order=desc&limit=5';
         const data = await fetchWithFallback(url);
         if (!data?.observations?.length) return null;
         const val = parseFloat(data.observations[0].value);
@@ -2051,7 +2036,7 @@
             const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y2, y10, y30] =
                 await Promise.all([
                     fetchYahoo('CL=F'),
-                    fetchYahoo('%5EVIX'),
+                    fetchYahoo('^VIX'),
                     fetchYahoo('GC=F'),
                     fetchYahoo('LMT'),
                     fetchYahoo('RTX'),
