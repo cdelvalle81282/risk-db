@@ -1057,8 +1057,9 @@
             }
         }
 
-        // Sparkline (stub call)
-        drawSparkline(id, data.history || []);
+        // Sparkline
+        const sparkZone = DashboardState.zones[id] || 'GREEN';
+        drawSparkline('spark-' + id, data.history || [], sparkZone);
     }
 
     // ---- Render Composite Panel ----
@@ -1118,6 +1119,14 @@
                 signalEl.style.color = '';
             }
         }
+
+        // Composite sparkline — use zone scores as proxy history
+        const zonePoints = { GREEN: 0, AMBER: 50, RED: 100 };
+        const compositeHistory = ['oil', 'defense', 'vix', 'gold', 'treasury'].map(
+            k => zonePoints[DashboardState.zones[k]] || 0
+        );
+        compositeHistory.push(score);
+        drawSparkline('spark-composite', compositeHistory, zone);
     }
 
     // ---- Render All Panels ----
@@ -1130,11 +1139,166 @@
         renderCompositePanel();
     }
 
+    // ---- Sparkline Renderer (Oscilloscope Style) ----
+    function drawSparkline(canvasId, data, zone) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || data.length < 2) return;
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = canvas.offsetWidth * dpr;
+        canvas.height = canvas.offsetHeight * dpr;
+        ctx.scale(dpr, dpr);
+        const w = canvas.offsetWidth;
+        const h = canvas.offsetHeight;
+        ctx.clearRect(0, 0, w, h);
+
+        const min = Math.min(...data);
+        const max = Math.max(...data);
+        const range = max - min || 1;
+        const step = w / (data.length - 1);
+
+        const colors = { GREEN: '#33ff33', AMBER: '#ffaa00', RED: '#ff3333' };
+        const color = colors[zone] || colors.GREEN;
+
+        // Glow effect
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 6;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        data.forEach((val, i) => {
+            const x = i * step;
+            const y = h - ((val - min) / range) * (h - 4) - 2;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Faint fill under the line
+        ctx.shadowBlur = 0;
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.globalAlpha = 0.08;
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+
+    // ---- Investment Impact Matrix Engine ----
+    const SECTOR_SENSITIVITY = {
+        'Defense/Aerospace':    { oil: 0.5,  vix: 0.5,  gold: 0,    treasury: 0,     defense: 1.0  },
+        'Energy/Oil Majors':    { oil: 1.0,  vix: 0.2,  gold: 0,    treasury: 0,     defense: 0.5  },
+        'Gold/Precious Metals': { oil: 0.5,  vix: 0.8,  gold: 1.0,  treasury: -0.5,  defense: 0.5  },
+        'Cash/Money Market':    { oil: 0,    vix: 0.8,  gold: 0,    treasury: 0.8,   defense: 0    },
+        'Growth Tech':          { oil: -0.8, vix: -0.8, gold: 0,    treasury: -0.8,  defense: 0    },
+        'Airlines/Transport':   { oil: -1.0, vix: -0.5, gold: 0,    treasury: 0,     defense: -0.5 },
+        'EM Equities':          { oil: -0.8, vix: -0.8, gold: 0,    treasury: -0.5,  defense: -0.5 },
+        'Banks/Financials':     { oil: 0,    vix: -0.5, gold: 0,    treasury: 0.8,   defense: 0    },
+        'Real Estate/REITs':    { oil: -0.5, vix: -0.5, gold: 0,    treasury: -0.8,  defense: 0    },
+        'Consumer Staples':     { oil: 0,    vix: 0.2,  gold: 0,    treasury: 0,     defense: 0    },
+        'Long-duration Bonds':  { oil: 0,    vix: 0.5,  gold: 0.2,  treasury: -1.0,  defense: 0    },
+        'Crypto/Speculative':   { oil: -0.5, vix: -0.8, gold: 0,    treasury: -0.5,  defense: 0    }
+    };
+
+    function scoreSectors() {
+        const zoneScores = { GREEN: 0, AMBER: 50, RED: 100 };
+        const z = DashboardState.zones;
+        const scores = {};
+
+        for (const [sector, weights] of Object.entries(SECTOR_SENSITIVITY)) {
+            const raw =
+                (zoneScores[z.oil] || 0) * weights.oil +
+                (zoneScores[z.vix] || 0) * weights.vix +
+                (zoneScores[z.gold] || 0) * weights.gold +
+                (zoneScores[z.treasury] || 0) * weights.treasury +
+                (zoneScores[z.defense] || 0) * weights.defense;
+
+            // Normalize to -100..+100 range by dividing by 2.5
+            scores[sector] = Math.round(Math.max(-100, Math.min(100, raw / 2.5)));
+        }
+        return scores;
+    }
+
+    function getArrows(score) {
+        const abs = Math.abs(score);
+        if (abs > 70) return score > 0 ? '\u25B2\u25B2\u25B2' : '\u25BC\u25BC\u25BC';
+        if (abs > 40) return score > 0 ? '\u25B2\u25B2' : '\u25BC\u25BC';
+        if (abs > 15) return score > 0 ? '\u25B2' : '\u25BC';
+        return '\u25C6';
+    }
+
+    function renderImpactMatrix() {
+        const scores = scoreSectors();
+        const favored = [];
+        const neutral = [];
+        const avoid = [];
+
+        for (const [sector, score] of Object.entries(scores)) {
+            const arrows = getArrows(score);
+            const item = { name: sector, score: score, arrows: arrows };
+            if (score > 30) {
+                favored.push(item);
+            } else if (score < -30) {
+                avoid.push(item);
+            } else {
+                neutral.push(item);
+            }
+        }
+
+        // Sort: favored descending, avoid ascending (most negative first)
+        favored.sort((a, b) => b.score - a.score);
+        avoid.sort((a, b) => a.score - b.score);
+        neutral.sort((a, b) => b.score - a.score);
+
+        // Render into the three columns
+        const favoredCol = document.querySelector('.impact-column.favored');
+        const neutralCol = document.querySelector('.impact-column.neutral');
+        const avoidCol = document.querySelector('.impact-column.avoid');
+
+        if (favoredCol) {
+            favoredCol.innerHTML = '<div class="impact-column-title">FAVORED</div>' +
+                (favored.length > 0
+                    ? favored.map(s => '<div class="impact-item">' + s.arrows + ' ' + s.name + '</div>').join('')
+                    : '<div class="impact-item">--</div>');
+        }
+
+        if (neutralCol) {
+            neutralCol.innerHTML = '<div class="impact-column-title">NEUTRAL</div>' +
+                (neutral.length > 0
+                    ? neutral.map(s => '<div class="impact-item">' + s.arrows + ' ' + s.name + '</div>').join('')
+                    : '<div class="impact-item">--</div>');
+        }
+
+        if (avoidCol) {
+            avoidCol.innerHTML = '<div class="impact-column-title">AVOID</div>' +
+                (avoid.length > 0
+                    ? avoid.map(s => '<div class="impact-item">' + s.arrows + ' ' + s.name + '</div>').join('')
+                    : '<div class="impact-item">--</div>');
+        }
+    }
+
+    // ---- Signal Ticker Tape ----
+    function renderTicker() {
+        const el = document.getElementById('ticker-content');
+        const signals = DashboardState.signals;
+        if (signals.length === 0) {
+            el.innerHTML = '<span class="ticker-item"><span class="ticker-sym">ALL</span> <span class="ticker-val">ALL CLEAR \u2014 No active signals \u2014 Risk level: LOW</span></span>';
+            el.style.color = 'var(--text-green)';
+            return;
+        }
+        // Build signal items and duplicate for seamless scroll
+        const items = signals.map(s => {
+            const icon = s.zone === 'RED' ? '\u26A0\u26A0' : '\u26A0';
+            return '<span class="ticker-item"><span class="ticker-sym">' + s.instrument.toUpperCase() + '</span> <span class="ticker-val">' + icon + ' ' + s.message + '</span></span>';
+        }).join('');
+        el.innerHTML = items + items; // Duplicate for seamless loop
+        // Color based on worst signal
+        el.style.color = signals.some(s => s.zone === 'RED') ? 'var(--text-red)' : 'var(--text-amber)';
+    }
+
     // ---- Stub Functions (to be implemented in subsequent tasks) ----
-    function renderImpactMatrix() {}
-    function renderTicker() {}
     function updateRadarColor() {}
-    function drawSparkline() {}
 
     // ---- Master Recalculate ----
     function recalculate() {
