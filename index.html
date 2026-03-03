@@ -584,6 +584,80 @@
             cursor: pointer;
         }
         .dial-reset:hover { color: var(--text-green); }
+
+        /* ============================================
+           ADMIN SETTINGS PANEL (Task 11)
+           ============================================ */
+        .admin-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 10001;
+            justify-content: center; align-items: center;
+        }
+        .admin-overlay.active { display: flex; }
+        .admin-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--text-green);
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(51,255,51,0.2);
+        }
+        .admin-panel h2 {
+            font-size: 14px; letter-spacing: 3px; margin-bottom: 20px;
+            text-shadow: var(--glow-green);
+        }
+        .admin-group {
+            margin-bottom: 15px; padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-green);
+        }
+        .admin-group-title {
+            font-size: 10px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 8px;
+        }
+        .admin-group label {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; margin-bottom: 5px;
+        }
+        .admin-group input {
+            background: var(--bg-panel); border: 1px solid var(--border-green);
+            color: var(--text-green); font-family: var(--font-mono);
+            padding: 5px 10px; width: 100px; text-align: right;
+        }
+        .admin-btn {
+            background: none; border: 1px solid var(--text-green); color: var(--text-green);
+            font-family: var(--font-mono); padding: 8px 20px; cursor: pointer;
+            margin-right: 10px; font-size: 11px; letter-spacing: 1px;
+        }
+        .admin-btn:hover { background: var(--text-green); color: var(--bg-primary); }
+        .admin-btn.danger { border-color: var(--text-red); color: var(--text-red); }
+        .admin-btn.danger:hover { background: var(--text-red); color: var(--bg-primary); }
+
+        /* ============================================
+           SCREEN SHAKE + BREACH ANIMATIONS (Task 12)
+           ============================================ */
+        @keyframes screen-shake {
+            0%, 100% { transform: translate(0); }
+            25% { transform: translate(-3px, 2px); }
+            50% { transform: translate(3px, -2px); }
+            75% { transform: translate(-2px, -3px); }
+        }
+        .shake { animation: screen-shake 0.3s ease; }
+
+        @keyframes panel-pulse {
+            0% { box-shadow: inset 0 0 0 rgba(255,51,51,0); }
+            50% { box-shadow: inset 0 0 30px rgba(255,51,51,0.3); }
+            100% { box-shadow: inset 0 0 0 rgba(255,51,51,0); }
+        }
+        .panel-breach { animation: panel-pulse 0.6s ease; }
+
+        @keyframes red-pulse {
+            0%, 100% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff333366; }
+            50% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff333399; }
+        }
+        .zone-red-pulse { animation: red-pulse 1s infinite; }
     </style>
 </head>
 <body>
@@ -602,7 +676,7 @@
                 LIVE
             </span>
             <span id="utc-clock" class="utc-clock">--:--:-- UTC</span>
-            <button id="sound-toggle" class="sound-toggle">[SND:OFF]</button>
+            <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()">[SND:OFF]</button>
         </div>
     </header>
 
@@ -777,6 +851,19 @@
                 <span class="ticker-item"><span class="ticker-sym">API</span> <span class="ticker-val">AWAITING HANDSHAKE...</span></span>
                 <span class="ticker-item"><span class="ticker-sym">GEO</span> <span class="ticker-val">SCANNING THREAT VECTORS...</span></span>
                 <span class="ticker-item"><span class="ticker-sym">MKT</span> <span class="ticker-val">MARKET FEED STANDBY</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ADMIN SETTINGS OVERLAY (Task 11) ========== -->
+    <div class="admin-overlay" id="admin-overlay">
+        <div class="admin-panel">
+            <h2>// ADMIN: THRESHOLD SETTINGS</h2>
+            <div id="admin-fields"></div>
+            <div style="margin-top:20px">
+                <button class="admin-btn" onclick="saveAdmin()">SAVE</button>
+                <button class="admin-btn danger" onclick="resetAdmin()">RESET DEFAULTS</button>
+                <button class="admin-btn" onclick="closeAdmin()">CLOSE</button>
             </div>
         </div>
     </div>
@@ -1315,12 +1402,14 @@
     }
 
     // ---- Signal Ticker Tape ----
+    let _lastTickerSignalCount = 0;
     function renderTicker() {
         const el = document.getElementById('ticker-content');
         const signals = DashboardState.signals;
         if (signals.length === 0) {
             el.innerHTML = '<span class="ticker-item"><span class="ticker-sym">ALL</span> <span class="ticker-val">ALL CLEAR \u2014 No active signals \u2014 Risk level: LOW</span></span>';
             el.style.color = 'var(--text-green)';
+            _lastTickerSignalCount = 0;
             return;
         }
         // Build signal items and duplicate for seamless scroll
@@ -1331,6 +1420,11 @@
         el.innerHTML = items + items; // Duplicate for seamless loop
         // Color based on worst signal
         el.style.color = signals.some(s => s.zone === 'RED') ? 'var(--text-red)' : 'var(--text-amber)';
+        // Play typewriter sound when new signals appear
+        if (signals.length > 0 && signals.length !== _lastTickerSignalCount) {
+            playTypewriter();
+        }
+        _lastTickerSignalCount = signals.length;
     }
 
     // ============================================
@@ -1602,6 +1696,217 @@
         ctx.fill();
     }
 
+    // ============================================
+    // Task 13: Sound System
+    // ============================================
+
+    let audioCtx = null;
+    let soundEnabled = false;
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        if (soundEnabled && !audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const btn = document.getElementById('sound-toggle');
+        btn.textContent = soundEnabled ? '[SND:ON]' : '[SND:OFF]';
+        if (soundEnabled) btn.classList.add('active');
+        else btn.classList.remove('active');
+    }
+
+    function playPing() {
+        if (!soundEnabled || !audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = 1200; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playGeiger() {
+        if (!soundEnabled || !audioCtx) return;
+        const bufferSize = audioCtx.sampleRate * 0.02;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.1;
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer; source.connect(audioCtx.destination); source.start();
+    }
+
+    function playTypewriter() {
+        if (!soundEnabled || !audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = 800; osc.type = 'square';
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
+    }
+
+    // ============================================
+    // Task 12: Screen Shake + Threshold Breach Detection
+    // ============================================
+
+    let previousZones = { oil: 'GREEN', defense: 'GREEN', vix: 'GREEN', gold: 'GREEN', treasury: 'GREEN' };
+
+    function checkBreaches() {
+        let breached = false;
+        for (const inst of ['oil', 'defense', 'vix', 'gold', 'treasury']) {
+            const prev = previousZones[inst];
+            const curr = DashboardState.zones[inst];
+            if (curr !== prev && (curr === 'RED' || (curr === 'AMBER' && prev === 'GREEN'))) {
+                breached = true;
+                const panel = document.getElementById('panel-' + inst);
+                if (panel) {
+                    panel.classList.add('panel-breach');
+                    setTimeout(() => panel.classList.remove('panel-breach'), 600);
+                }
+            }
+            previousZones[inst] = curr;
+        }
+        if (breached) {
+            const screen = document.getElementById('crt-screen');
+            if (screen) {
+                screen.classList.add('shake');
+                setTimeout(() => screen.classList.remove('shake'), 300);
+            }
+            playGeiger();
+        }
+        // Pulsing red on RED zones
+        for (const inst of ['oil', 'defense', 'vix', 'gold', 'treasury']) {
+            const priceEl = document.getElementById('price-' + inst);
+            if (priceEl) {
+                if (DashboardState.zones[inst] === 'RED') {
+                    priceEl.classList.add('zone-red-pulse');
+                } else {
+                    priceEl.classList.remove('zone-red-pulse');
+                }
+            }
+        }
+    }
+
+    // ============================================
+    // Task 11: Admin Settings Panel
+    // ============================================
+
+    function openAdmin() {
+        const container = document.getElementById('admin-fields');
+        container.innerHTML = '';
+
+        const groups = [
+            { title: 'OIL THRESHOLDS', fields: [
+                { label: 'Green Below', key: 'oil.green', value: thresholds.oil.green },
+                { label: 'Amber Below', key: 'oil.amber', value: thresholds.oil.amber }
+            ]},
+            { title: 'DEFENSE THRESHOLDS (% change)', fields: [
+                { label: 'Green Below', key: 'defense.green', value: thresholds.defense.green },
+                { label: 'Amber Below', key: 'defense.amber', value: thresholds.defense.amber }
+            ]},
+            { title: 'VIX THRESHOLDS', fields: [
+                { label: 'Green Below', key: 'vix.green', value: thresholds.vix.green },
+                { label: 'Amber Below', key: 'vix.amber', value: thresholds.vix.amber }
+            ]},
+            { title: 'GOLD THRESHOLDS', fields: [
+                { label: 'Green Below', key: 'gold.green', value: thresholds.gold.green },
+                { label: 'Amber Below', key: 'gold.amber', value: thresholds.gold.amber }
+            ]},
+            { title: 'TREASURY THRESHOLDS (spread)', fields: [
+                { label: 'Green Above', key: 'treasury.green', value: thresholds.treasury.green },
+                { label: 'Amber Above', key: 'treasury.amber', value: thresholds.treasury.amber }
+            ]},
+            { title: 'COMPOSITE WEIGHTS', fields: [
+                { label: 'Oil Weight', key: 'weights.oil', value: thresholds.weights.oil },
+                { label: 'Defense Weight', key: 'weights.defense', value: thresholds.weights.defense },
+                { label: 'VIX Weight', key: 'weights.vix', value: thresholds.weights.vix },
+                { label: 'Gold Weight', key: 'weights.gold', value: thresholds.weights.gold },
+                { label: 'Treasury Weight', key: 'weights.treasury', value: thresholds.weights.treasury }
+            ]},
+            { title: 'API CONFIGURATION', fields: [
+                { label: 'FRED API Key', key: 'fredApiKey', value: localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY', type: 'text' }
+            ]}
+        ];
+
+        groups.forEach(group => {
+            const div = document.createElement('div');
+            div.className = 'admin-group';
+            const title = document.createElement('div');
+            title.className = 'admin-group-title';
+            title.textContent = group.title;
+            div.appendChild(title);
+
+            group.fields.forEach(field => {
+                const lbl = document.createElement('label');
+                const span = document.createElement('span');
+                span.textContent = field.label;
+                const input = document.createElement('input');
+                input.type = field.type || 'number';
+                input.step = 'any';
+                input.value = field.value;
+                input.dataset.key = field.key;
+                lbl.appendChild(span);
+                lbl.appendChild(input);
+                div.appendChild(lbl);
+            });
+
+            container.appendChild(div);
+        });
+
+        document.getElementById('admin-overlay').classList.add('active');
+    }
+
+    function closeAdmin() {
+        document.getElementById('admin-overlay').classList.remove('active');
+    }
+
+    function saveAdmin() {
+        const inputs = document.querySelectorAll('#admin-fields input');
+        inputs.forEach(input => {
+            const key = input.dataset.key;
+            if (key === 'fredApiKey') {
+                localStorage.setItem('riskTerminal_fredKey', input.value);
+                return;
+            }
+            const parts = key.split('.');
+            if (parts.length === 2) {
+                if (!thresholds[parts[0]]) thresholds[parts[0]] = {};
+                thresholds[parts[0]][parts[1]] = parseFloat(input.value);
+            }
+        });
+        localStorage.setItem('riskTerminal_thresholds', JSON.stringify(thresholds));
+        closeAdmin();
+        recalculate();
+    }
+
+    function resetAdmin() {
+        thresholds = Object.assign({}, DEFAULT_THRESHOLDS, {
+            oil: Object.assign({}, DEFAULT_THRESHOLDS.oil),
+            defense: Object.assign({}, DEFAULT_THRESHOLDS.defense),
+            vix: Object.assign({}, DEFAULT_THRESHOLDS.vix),
+            gold: Object.assign({}, DEFAULT_THRESHOLDS.gold),
+            treasury: Object.assign({}, DEFAULT_THRESHOLDS.treasury),
+            weights: Object.assign({}, DEFAULT_THRESHOLDS.weights)
+        });
+        localStorage.removeItem('riskTerminal_thresholds');
+        closeAdmin();
+        openAdmin();
+    }
+
+    // Keyboard shortcut: Ctrl+Shift+A opens admin
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+            e.preventDefault();
+            openAdmin();
+        }
+    });
+
+    // URL param: ?admin=true auto-opens on load
+    if (new URLSearchParams(window.location.search).get('admin') === 'true') {
+        window.addEventListener('DOMContentLoaded', function() { openAdmin(); });
+        // Also try immediately in case DOMContentLoaded already fired
+        if (document.readyState !== 'loading') openAdmin();
+    }
+
     // ---- Master Recalculate ----
     function recalculate() {
         const effective = applyScenario();
@@ -1610,6 +1915,7 @@
         renderTicker();
         updateRadarColor();
         DashboardState.lastUpdate = new Date();
+        checkBreaches();
     }
 
     // ============================================
