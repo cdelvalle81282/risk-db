@@ -408,8 +408,8 @@
         /* Sparkline canvas */
         .sparkline-canvas {
             width: 100%;
-            height: 28px;
-            margin-bottom: 4px;
+            height: 38px;
+            margin-bottom: 2px;
             opacity: 0.7;
         }
 
@@ -1413,6 +1413,9 @@
         const h = canvas.offsetHeight;
         ctx.clearRect(0, 0, w, h);
 
+        const axisH = 10; // space for time labels at bottom
+        const chartH = h - axisH;
+
         const min = Math.min(...data);
         const max = Math.max(...data);
         const range = max - min || 1;
@@ -1429,7 +1432,7 @@
         ctx.beginPath();
         data.forEach((val, i) => {
             const x = i * step;
-            const y = h - ((val - min) / range) * (h - 4) - 2;
+            const y = chartH - ((val - min) / range) * (chartH - 4) - 2;
             if (i === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
         });
@@ -1437,13 +1440,35 @@
 
         // Faint fill under the line
         ctx.shadowBlur = 0;
-        ctx.lineTo(w, h);
-        ctx.lineTo(0, h);
+        ctx.lineTo(w, chartH);
+        ctx.lineTo(0, chartH);
         ctx.closePath();
         ctx.globalAlpha = 0.08;
         ctx.fillStyle = color;
         ctx.fill();
         ctx.globalAlpha = 1;
+
+        // Time axis labels (3-day span: -3D, -2D, -1D, NOW)
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#556';
+        ctx.font = '7px monospace';
+        ctx.textAlign = 'center';
+        const labels = ['-3D', '-2D', '-1D', 'NOW'];
+        labels.forEach((lbl, i) => {
+            const x = (i / (labels.length - 1)) * w;
+            ctx.fillText(lbl, x, h - 1);
+        });
+
+        // Faint vertical day dividers
+        ctx.strokeStyle = '#334';
+        ctx.lineWidth = 0.5;
+        for (let i = 1; i < labels.length - 1; i++) {
+            const x = (i / (labels.length - 1)) * w;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, chartH);
+            ctx.stroke();
+        }
     }
 
     // ---- Investment Impact Matrix Engine ----
@@ -2224,7 +2249,7 @@
     DashboardState.live.defense = { price: 445.30, change: 5.20, changePercent: 1.18, history: [438,439,440,438.5,441,440,442,441.5,443,442,441,443,444,442.5,443.5,444,443,444.5,445,443.5,444,445,444.5,445.3,444,445,445.3,444.8,445.1,445.3] };
     DashboardState.live.vix = { price: 18.34, change: -0.82, changePercent: -4.28, history: [22.1,21.8,21.5,22.0,21.2,20.8,21.0,20.5,20.2,20.8,20.0,19.8,20.1,19.5,19.8,19.2,19.5,19.0,19.3,18.8,19.1,18.5,18.8,18.6,18.9,18.4,18.7,18.5,18.4,18.34] };
     DashboardState.live.gold = { price: 2041.50, change: 12.30, changePercent: 0.61, history: [2020,2022,2025,2021,2028,2024,2030,2027,2032,2029,2033,2031,2035,2032,2036,2034,2038,2035,2037,2039,2036,2040,2038,2041,2039,2040,2042,2040.5,2041,2041.5] };
-    DashboardState.live.treasury = { y2: 4.82, y10: 4.31, y30: 4.48, spread: -0.51, history: [-0.20,-0.22,-0.25,-0.23,-0.28,-0.26,-0.30,-0.28,-0.32,-0.30,-0.35,-0.33,-0.36,-0.34,-0.38,-0.36,-0.40,-0.38,-0.42,-0.40,-0.44,-0.42,-0.46,-0.44,-0.48,-0.46,-0.49,-0.48,-0.50,-0.51] };
+    DashboardState.live.treasury = { y2: 3.38, y10: 3.97, y30: 4.64, spread: 0.59, history: [0.45,0.46,0.48,0.47,0.49,0.48,0.50,0.49,0.51,0.50,0.52,0.51,0.53,0.52,0.54,0.53,0.55,0.54,0.56,0.55,0.57,0.56,0.58,0.57,0.58,0.57,0.59,0.58,0.59,0.59] };
     recalculate(); // Render immediately with mock data
 
     // ---- Initialize 3D Radar + Scenario Dials ----
