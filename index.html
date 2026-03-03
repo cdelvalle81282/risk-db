@@ -341,6 +341,11 @@
         .zone-badge.rates     { color: var(--text-green); border-color: var(--text-green); }
         .zone-badge.composite { color: var(--text-amber); border-color: var(--text-amber); }
 
+        /* Zone-based coloring (dynamic, set by JS) */
+        .zone-badge.zone-green  { color: var(--text-green); border-color: var(--text-green); text-shadow: var(--glow-green); }
+        .zone-badge.zone-amber  { color: var(--text-amber); border-color: var(--text-amber); text-shadow: var(--glow-amber); }
+        .zone-badge.zone-red    { color: var(--text-red);   border-color: var(--text-red);   text-shadow: var(--glow-red); }
+
         /* Panel price display */
         .panel-price {
             font-size: 28px;
@@ -753,6 +758,404 @@
      SCRIPTS — Task 2: VHS Noise + UTC Clock
      ============================================ -->
 <script>
+    // ============================================
+    // Task 3: Dashboard State Engine + Threshold Logic
+    // ============================================
+
+    // ---- Dashboard State ----
+    const DashboardState = {
+        live: {
+            oil: { price: null, change: null, changePercent: null, history: [] },
+            defense: { price: null, change: null, changePercent: null, history: [] },
+            vix: { price: null, change: null, changePercent: null, history: [] },
+            gold: { price: null, change: null, changePercent: null, history: [] },
+            treasury: { y2: null, y10: null, y30: null, spread: null, history: [] }
+        },
+        scenario: { oil: null, conflict: 1, sanctions: 1, supply: 1 },
+        zones: { oil: 'GREEN', defense: 'GREEN', vix: 'GREEN', gold: 'GREEN', treasury: 'GREEN' },
+        compositeScore: 0,
+        signals: [],
+        lastUpdate: null,
+        staleData: false
+    };
+
+    // ---- Default Thresholds (admin-adjustable) ----
+    const DEFAULT_THRESHOLDS = {
+        oil: { green: 75, amber: 95 },
+        defense: { green: 2, amber: 5 },
+        vix: { green: 20, amber: 30 },
+        gold: { green: 2000, amber: 2200 },
+        treasury: { green: 0, amber: -0.5 },
+        weights: { oil: 0.20, defense: 0.20, vix: 0.25, gold: 0.15, treasury: 0.20 }
+    };
+
+    function loadThresholds() {
+        try {
+            const stored = localStorage.getItem('riskTerminal_thresholds');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                return Object.assign({}, DEFAULT_THRESHOLDS, parsed);
+            }
+        } catch (e) {
+            console.warn('Failed to load thresholds from localStorage, using defaults:', e);
+        }
+        return Object.assign({}, DEFAULT_THRESHOLDS);
+    }
+
+    let thresholds = loadThresholds();
+
+    // ---- Zone Calculator ----
+    function calculateZone(instrument, value) {
+        const t = thresholds[instrument];
+        if (!t || value === null || value === undefined) return 'GREEN';
+
+        if (instrument === 'treasury') {
+            // Treasury uses inverted logic (spread-based)
+            // More positive spread = healthier; more negative = worse
+            if (value > t.green) return 'GREEN';
+            if (value > t.amber) return 'AMBER';
+            return 'RED';
+        }
+
+        // Standard instruments: lower is better
+        if (value < t.green) return 'GREEN';
+        if (value < t.amber) return 'AMBER';
+        return 'RED';
+    }
+
+    // ---- Composite Score Calculator ----
+    function calculateComposite() {
+        const zonePoints = { GREEN: 0, AMBER: 50, RED: 100 };
+        const w = thresholds.weights;
+        const z = DashboardState.zones;
+
+        const score =
+            (zonePoints[z.oil] || 0) * w.oil +
+            (zonePoints[z.defense] || 0) * w.defense +
+            (zonePoints[z.vix] || 0) * w.vix +
+            (zonePoints[z.gold] || 0) * w.gold +
+            (zonePoints[z.treasury] || 0) * w.treasury;
+
+        DashboardState.compositeScore = Math.round(score);
+        return DashboardState.compositeScore;
+    }
+
+    // ---- Signal Messages ----
+    const SIGNAL_MESSAGES = {
+        oil: {
+            GREEN: 'OIL STABLE — ENERGY SECTOR NEUTRAL',
+            AMBER: 'OIL ELEVATED — MONITOR ENERGY EXPOSURE',
+            RED: 'OIL SPIKE — REDUCE CONSUMER DISCRETIONARY, FAVOR ENERGY'
+        },
+        defense: {
+            GREEN: 'DEFENSE CALM — STANDARD ALLOCATION',
+            AMBER: 'DEFENSE ELEVATED — CONSIDER AEROSPACE & DEFENSE TILT',
+            RED: 'DEFENSE SURGE — MAX OVERWEIGHT DEFENSE SECTOR'
+        },
+        vix: {
+            GREEN: 'VIX LOW — RISK-ON ENVIRONMENT',
+            AMBER: 'VIX ELEVATED — HEDGE TAIL RISK',
+            RED: 'VIX SPIKE — ACTIVATE PORTFOLIO PROTECTION'
+        },
+        gold: {
+            GREEN: 'GOLD STABLE — STANDARD SAFE-HAVEN ALLOCATION',
+            AMBER: 'GOLD RISING — INCREASE PRECIOUS METALS EXPOSURE',
+            RED: 'GOLD SURGE — FLIGHT TO SAFETY ACTIVE'
+        },
+        treasury: {
+            GREEN: 'YIELD CURVE NORMAL — GROWTH OUTLOOK POSITIVE',
+            AMBER: 'CURVE FLATTENING — CAUTION ON DURATION',
+            RED: 'CURVE INVERTED — RECESSION SIGNAL ACTIVE'
+        }
+    };
+
+    // ---- Signal Generator ----
+    function generateSignals() {
+        const signals = [];
+        const instruments = ['oil', 'defense', 'vix', 'gold', 'treasury'];
+
+        instruments.forEach(function(inst) {
+            const zone = DashboardState.zones[inst];
+            if (zone !== 'GREEN') {
+                signals.push({
+                    instrument: inst,
+                    zone: zone,
+                    message: SIGNAL_MESSAGES[inst][zone]
+                });
+            }
+        });
+
+        DashboardState.signals = signals;
+        return signals;
+    }
+
+    // ---- Scenario Correlation Cascade ----
+    function applyScenario() {
+        const s = DashboardState.scenario;
+        const live = DashboardState.live;
+
+        // Start from live values
+        const effective = {
+            oil: { price: live.oil.price, change: live.oil.change, changePercent: live.oil.changePercent, history: live.oil.history.slice() },
+            defense: { price: live.defense.price, change: live.defense.change, changePercent: live.defense.changePercent, history: live.defense.history.slice() },
+            vix: { price: live.vix.price, change: live.vix.change, changePercent: live.vix.changePercent, history: live.vix.history.slice() },
+            gold: { price: live.gold.price, change: live.gold.change, changePercent: live.gold.changePercent, history: live.gold.history.slice() },
+            treasury: { y2: live.treasury.y2, y10: live.treasury.y10, y30: live.treasury.y30, spread: live.treasury.spread, history: live.treasury.history.slice() }
+        };
+
+        // Oil dial overrides oil price directly
+        if (s.oil !== null) {
+            effective.oil.price = s.oil;
+        }
+
+        // Conflict (1-10): scales defense +15%, oil +15%, gold +10%, VIX +20pts at max
+        if (s.conflict > 1) {
+            const factor = (s.conflict - 1) / 9;
+            effective.defense.price *= (1 + 0.15 * factor);
+            effective.oil.price *= (1 + 0.15 * factor);
+            effective.gold.price *= (1 + 0.10 * factor);
+            effective.vix.price += 20 * factor;
+        }
+
+        // Sanctions (1-10): oil +30%, gold +6%, VIX +10pts at max
+        if (s.sanctions > 1) {
+            const factor = (s.sanctions - 1) / 9;
+            effective.oil.price *= (1 + 0.30 * factor);
+            effective.gold.price *= (1 + 0.06 * factor);
+            effective.vix.price += 10 * factor;
+        }
+
+        // Supply (1-10): oil +20%, gold +5%, spread flattens 0.3 at max
+        if (s.supply > 1) {
+            const factor = (s.supply - 1) / 9;
+            effective.oil.price *= (1 + 0.20 * factor);
+            effective.gold.price *= (1 + 0.05 * factor);
+            effective.treasury.spread -= 0.3 * factor;
+        }
+
+        // Recalculate zones based on effective values
+        DashboardState.zones.oil = calculateZone('oil', effective.oil.price);
+        DashboardState.zones.defense = calculateZone('defense', effective.defense.changePercent);
+        DashboardState.zones.vix = calculateZone('vix', effective.vix.price);
+        DashboardState.zones.gold = calculateZone('gold', effective.gold.price);
+        DashboardState.zones.treasury = calculateZone('treasury', effective.treasury.spread);
+
+        // Recalculate composite and signals
+        calculateComposite();
+        generateSignals();
+
+        return effective;
+    }
+
+    // ============================================
+    // Task 4: Panel Rendering + Zone Styling
+    // ============================================
+
+    // ---- Zone color helper ----
+    function getZoneColor(zone) {
+        switch (zone) {
+            case 'GREEN': return 'var(--text-green)';
+            case 'AMBER': return 'var(--text-amber)';
+            case 'RED':   return 'var(--text-red)';
+            default:      return 'var(--text-green)';
+        }
+    }
+
+    function getZoneGlow(zone) {
+        switch (zone) {
+            case 'GREEN': return 'var(--glow-green)';
+            case 'AMBER': return 'var(--glow-amber)';
+            case 'RED':   return 'var(--glow-red)';
+            default:      return 'var(--glow-green)';
+        }
+    }
+
+    function getZoneClass(zone) {
+        switch (zone) {
+            case 'GREEN': return 'zone-green';
+            case 'AMBER': return 'zone-amber';
+            case 'RED':   return 'zone-red';
+            default:      return 'zone-green';
+        }
+    }
+
+    // ---- Render Single Panel ----
+    function renderSinglePanel(id, data) {
+        const zone = DashboardState.zones[id] || 'GREEN';
+        const zoneColor = getZoneColor(zone);
+        const zoneGlow = getZoneGlow(zone);
+        const zoneClass = getZoneClass(zone);
+
+        // Price element
+        const priceEl = document.getElementById('price-' + id);
+        if (priceEl) {
+            if (id === 'treasury') {
+                priceEl.textContent = data.spread !== null ? data.spread.toFixed(2) + ' bps' : '--';
+            } else {
+                priceEl.textContent = data.price !== null ? data.price.toFixed(2) : '--';
+            }
+            priceEl.style.color = zoneColor;
+            priceEl.style.textShadow = zoneGlow;
+        }
+
+        // Change element
+        const changeEl = document.getElementById('change-' + id);
+        if (changeEl) {
+            let changeVal, changePct;
+            if (id === 'treasury') {
+                changeVal = data.spread;
+                changePct = null;
+            } else {
+                changeVal = data.change;
+                changePct = data.changePercent;
+            }
+
+            let arrow, cssClass;
+            if (changeVal > 0) {
+                arrow = '\u25B2'; // ▲
+                cssClass = 'up';
+            } else if (changeVal < 0) {
+                arrow = '\u25BC'; // ▼
+                cssClass = 'down';
+            } else {
+                arrow = '\u25C6'; // ◆
+                cssClass = 'neutral';
+            }
+
+            if (id === 'treasury') {
+                changeEl.textContent = arrow + ' 2Y:' + (data.y2 !== null ? data.y2.toFixed(2) : '--') +
+                    ' | 10Y:' + (data.y10 !== null ? data.y10.toFixed(2) : '--') +
+                    ' | 30Y:' + (data.y30 !== null ? data.y30.toFixed(2) : '--');
+            } else {
+                const sign = changeVal >= 0 ? '+' : '';
+                changeEl.textContent = arrow + ' ' + sign + (changeVal !== null ? changeVal.toFixed(2) : '--') +
+                    (changePct !== null ? ' (' + sign + changePct.toFixed(2) + '%)' : '');
+            }
+
+            changeEl.className = 'panel-change ' + cssClass;
+        }
+
+        // Zone badge
+        const panelEl = document.getElementById('panel-' + id);
+        if (panelEl) {
+            const badge = panelEl.querySelector('.zone-badge');
+            if (badge) {
+                badge.textContent = zone;
+                badge.className = 'zone-badge ' + zoneClass;
+            }
+        }
+
+        // Signal message
+        const signalEl = document.getElementById('signal-' + id);
+        if (signalEl) {
+            if (zone !== 'GREEN' && SIGNAL_MESSAGES[id] && SIGNAL_MESSAGES[id][zone]) {
+                signalEl.textContent = 'SIGNAL: ' + SIGNAL_MESSAGES[id][zone];
+                signalEl.style.color = zoneColor;
+            } else {
+                signalEl.textContent = 'SIGNAL: NOMINAL';
+                signalEl.style.color = '';
+            }
+        }
+
+        // Sparkline (stub call)
+        drawSparkline(id, data.history || []);
+    }
+
+    // ---- Render Composite Panel ----
+    function renderCompositePanel() {
+        const score = DashboardState.compositeScore;
+        let riskLevel, zone;
+
+        if (score < 25) {
+            riskLevel = 'LOW RISK';
+            zone = 'GREEN';
+        } else if (score < 60) {
+            riskLevel = 'MODERATE RISK';
+            zone = 'AMBER';
+        } else {
+            riskLevel = 'HIGH RISK';
+            zone = 'RED';
+        }
+
+        const zoneColor = getZoneColor(zone);
+        const zoneGlow = getZoneGlow(zone);
+        const zoneClass = getZoneClass(zone);
+
+        const priceEl = document.getElementById('price-composite');
+        if (priceEl) {
+            priceEl.textContent = score + ' / 100';
+            priceEl.style.color = zoneColor;
+            priceEl.style.textShadow = zoneGlow;
+        }
+
+        const changeEl = document.getElementById('change-composite');
+        if (changeEl) {
+            changeEl.textContent = riskLevel;
+            changeEl.className = 'panel-change';
+            changeEl.style.color = zoneColor;
+            changeEl.style.textShadow = zoneGlow;
+        }
+
+        const panelEl = document.getElementById('panel-composite');
+        if (panelEl) {
+            const badge = panelEl.querySelector('.zone-badge');
+            if (badge) {
+                badge.textContent = zone;
+                badge.className = 'zone-badge ' + zoneClass;
+            }
+        }
+
+        const signalEl = document.getElementById('signal-composite');
+        if (signalEl) {
+            if (zone === 'RED') {
+                signalEl.textContent = 'SIGNAL: ACTIVATE FULL DEFENSIVE POSTURE';
+                signalEl.style.color = zoneColor;
+            } else if (zone === 'AMBER') {
+                signalEl.textContent = 'SIGNAL: INCREASE HEDGING — REVIEW ALLOCATIONS';
+                signalEl.style.color = zoneColor;
+            } else {
+                signalEl.textContent = 'SIGNAL: ALL SYSTEMS NOMINAL';
+                signalEl.style.color = '';
+            }
+        }
+    }
+
+    // ---- Render All Panels ----
+    function renderPanels(effective) {
+        renderSinglePanel('oil', effective.oil);
+        renderSinglePanel('defense', effective.defense);
+        renderSinglePanel('vix', effective.vix);
+        renderSinglePanel('gold', effective.gold);
+        renderSinglePanel('treasury', effective.treasury);
+        renderCompositePanel();
+    }
+
+    // ---- Stub Functions (to be implemented in subsequent tasks) ----
+    function renderImpactMatrix() {}
+    function renderTicker() {}
+    function updateRadarColor() {}
+    function drawSparkline() {}
+
+    // ---- Master Recalculate ----
+    function recalculate() {
+        const effective = applyScenario();
+        renderPanels(effective);
+        renderImpactMatrix();
+        renderTicker();
+        updateRadarColor();
+        DashboardState.lastUpdate = new Date();
+    }
+
+    // ============================================
+    // Mock Data Initialization
+    // ============================================
+    DashboardState.live.oil = { price: 78.42, change: 1.23, changePercent: 1.59, history: [76,77,76.5,77.8,78,78.2,78.5,78.1,78.42] };
+    DashboardState.live.defense = { price: 445.30, change: 5.20, changePercent: 1.18, history: [440,442,441,443,444,445,445.3] };
+    DashboardState.live.vix = { price: 18.34, change: -0.82, changePercent: -4.28, history: [20,19.5,19.2,19,18.8,18.5,18.34] };
+    DashboardState.live.gold = { price: 2041.50, change: 12.30, changePercent: 0.61, history: [2030,2032,2035,2038,2040,2041,2041.5] };
+    DashboardState.live.treasury = { y2: 4.82, y10: 4.31, y30: 4.48, spread: -0.51, history: [-0.3,-0.35,-0.4,-0.45,-0.48,-0.51] };
+    recalculate();
+
     // ---- VHS Noise Generator ----
     (function initNoise() {
         const canvas = document.getElementById('noise-canvas');
