@@ -887,6 +887,132 @@
             color: var(--text-dim);
             letter-spacing: 1px;
         }
+
+/* ============================================
+   INTEL POPUP OVERLAY
+   ============================================ */
+.intel-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.intel-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.intel-modal {
+    background: var(--bg-panel);
+    border: 1px solid var(--text-green);
+    box-shadow: 0 0 30px rgba(51, 255, 51, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.5);
+    max-width: 640px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px 28px;
+    position: relative;
+    font-family: var(--font-mono);
+}
+
+.intel-modal h2 {
+    color: var(--text-amber);
+    text-shadow: var(--glow-amber);
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.intel-modal p, .intel-modal li {
+    color: var(--text-green);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.intel-modal strong {
+    color: var(--text-amber);
+    text-shadow: none;
+}
+
+.intel-modal ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.intel-modal ul li::before {
+    content: '> ';
+    color: var(--text-dim);
+}
+
+.intel-close {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none;
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.intel-close:hover {
+    color: var(--text-red);
+    border-color: var(--text-red);
+}
+
+.intel-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.intel-btn {
+    background: none;
+    border: 1px solid var(--text-green);
+    color: var(--text-green);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 6px 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.intel-btn:hover {
+    background: var(--text-green);
+    color: var(--bg-primary);
+}
+
+.intel-btn.primary {
+    border-color: var(--text-amber);
+    color: var(--text-amber);
+}
+
+.intel-btn.primary:hover {
+    background: var(--text-amber);
+    color: var(--bg-primary);
+}
+
+.intel-page-indicator {
+    text-align: center;
+    margin-top: 14px;
+    color: var(--text-dim);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
     </style>
 </head>
 <body>
@@ -1055,6 +1181,16 @@
             <div class="trader-editorial-item"><a style="cursor:default; color: var(--text-dim)">LOADING INTEL...</a></div>
         </div>
     </section>
+
+    <!-- ========== INTEL POPUP ========== -->
+    <div class="intel-overlay" id="intel-overlay">
+        <div class="intel-modal">
+            <button class="intel-close" onclick="closeIntel()">[X]</button>
+            <div id="intel-content"></div>
+            <div class="intel-buttons" id="intel-buttons"></div>
+            <div class="intel-page-indicator" id="intel-page-indicator"></div>
+        </div>
+    </div>
 
     <!-- ========== SIGNAL TICKER BAR ========== -->
     <div class="ticker-bar">
@@ -2016,6 +2152,149 @@
         gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
         osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    // ============================================
+    // Intel Popup System
+    // ============================================
+
+    const INTEL_PAGES_QUICK = [
+        {
+            title: 'WELCOME TO THE WAR ROOM',
+            body: '<p>This dashboard is your early warning system. It watches 5 market instruments &mdash; like trip wires around a perimeter &mdash; and tells you when something moves that shouldn\'t.</p>' +
+                  '<p><strong>GREEN</strong> = all quiet. <strong style="color:var(--text-amber)">AMBER</strong> = something\'s stirring. <strong style="color:var(--text-red)">RED</strong> = battle stations.</p>',
+            buttons: [
+                { label: 'QUICK TOUR', action: 'next', primary: true },
+                { label: 'FULL BRIEFING', action: 'fullBriefing' },
+                { label: 'SKIP', action: 'close' }
+            ]
+        },
+        {
+            title: 'THE INSTRUMENT PANELS',
+            body: '<p>Each of the 6 panels tracks a different threat. Think of them as radar screens, each watching a different part of the sky:</p>' +
+                  '<ul>' +
+                  '<li><strong>OIL</strong> &mdash; The supply-shock tripwire. When oil spikes, someone is fighting over it.</li>' +
+                  '<li><strong>DEFENSE</strong> &mdash; The conflict thermometer. Defense stocks rise when smart money smells gunpowder.</li>' +
+                  '<li><strong>VIX</strong> &mdash; The fear gauge. It measures how scared Wall Street is right now.</li>' +
+                  '<li><strong>GOLD</strong> &mdash; The bunker indicator. When gold surges, people are hiding.</li>' +
+                  '<li><strong>TREASURY</strong> &mdash; The recession radar. When short-term rates pass long-term rates, the economy is driving by looking in the rearview mirror.</li>' +
+                  '<li><strong>COMPOSITE</strong> &mdash; All five trip wires rolled into one threat level.</li>' +
+                  '</ul>' +
+                  '<p>Each panel shows <strong>live news headlines</strong> that update every 5 minutes. Click any headline to read the full story.</p>' +
+                  '<p><strong>Click any panel</strong> for the full intel briefing on why it matters and how we set the alarm levels.</p>'
+        },
+        {
+            title: 'THE CONTROLS & DATA',
+            body: '<p><strong>Scenario Dials</strong> (left sidebar): These are your "what if" sliders. Crank CONFLICT to 10 to see what a war does to markets. Crank CREDIT STRESS to simulate a 2008-style meltdown. Watch the panels react in real time.</p>' +
+                  '<p><strong>FAVORED / AVOID</strong> (bottom): Based on current threat levels, these are the sectors you want to own &mdash; or run from.</p>' +
+                  '<p><strong>"What the Traders Think"</strong> (bottom): Articles written by Option Pit\'s traders about the current conflict and market environment.</p>' +
+                  '<p><strong>Market data refreshes every 15 minutes. News updates every 5 minutes.</strong></p>' +
+                  '<p>Questions? Suggestions? Email <strong>support@optionpit.com</strong></p>',
+            buttons: [
+                { label: 'GOT IT \u2014 TAKE ME IN', action: 'close', primary: true }
+            ]
+        }
+    ];
+
+    const INTEL_PAGES_FULL = [
+        {
+            title: 'THE COMPOSITE SCORE',
+            body: '<p>The composite score takes all 5 instruments and rolls them into one number from 0 to 100.</p>' +
+                  '<p>Each instrument gets a weight based on how good it is at predicting trouble:</p>' +
+                  '<ul>' +
+                  '<li><strong>VIX</strong> gets the biggest share (30%) &mdash; it reacts to everything</li>' +
+                  '<li><strong>Oil</strong> and <strong>Treasury</strong> each get 20% &mdash; one watches supply shocks, the other watches recessions</li>' +
+                  '<li><strong>Defense</strong> and <strong>Gold</strong> each get 15% &mdash; they confirm what the others are saying</li>' +
+                  '</ul>' +
+                  '<p><strong>0-30 = GREEN.</strong> All quiet. <strong style="color:var(--text-amber)">30-60 = AMBER.</strong> Hedges up. <strong style="color:var(--text-red)">60+ = RED.</strong> Defensive posture.</p>'
+        },
+        {
+            title: 'THE FAVORED/AVOID MATRIX',
+            body: '<p>When threat levels change, some investments benefit and others get hurt. The matrix at the bottom scores 12 sectors based on how they historically react to each threat.</p>' +
+                  '<p>For example: when oil spikes, energy stocks win and airlines lose. When VIX spikes, cash and gold miners win, growth tech loses.</p>' +
+                  '<p>The arrows tell you how strong the signal is. One arrow = mild. Three arrows = strong conviction.</p>'
+        },
+        {
+            title: 'THE SCENARIO DIALS',
+            body: '<p>The three dials on the left let you stress-test the dashboard:</p>' +
+                  '<ul>' +
+                  '<li><strong>CONFLICT</strong> (1-10): Simulates military escalation. At max, oil jumps 25%, defense stocks surge 20%, and VIX climbs 15 points. Based on what actually happened during the Ukraine invasion.</li>' +
+                  '<li><strong>CREDIT STRESS</strong> (1-10): Simulates a financial crisis. At max, VIX spikes 35 points and the yield curve flattens hard. Based on the 2008 crash and COVID panic.</li>' +
+                  '<li><strong>SUPPLY DISRUPTION</strong> (1-10): Simulates a trade or energy blockade. At max, oil jumps 30%. Based on scenarios like a Strait of Hormuz closure.</li>' +
+                  '</ul>' +
+                  '<p>The dials stack &mdash; you can combine all three to model a worst-case scenario.</p>',
+            buttons: [
+                { label: 'GOT IT \u2014 TAKE ME IN', action: 'close', primary: true }
+            ]
+        }
+    ];
+
+    let intelPages = [];
+    let intelPage = 0;
+
+    function openIntel() {
+        intelPages = INTEL_PAGES_QUICK.slice();
+        intelPage = 0;
+        renderIntelPage();
+        document.getElementById('intel-overlay').classList.add('active');
+    }
+
+    function closeIntel() {
+        document.getElementById('intel-overlay').classList.remove('active');
+        localStorage.setItem('riskTerminal_seen', '1');
+    }
+
+    function renderIntelPage() {
+        var page = intelPages[intelPage];
+        var contentEl = document.getElementById('intel-content');
+        var buttonsEl = document.getElementById('intel-buttons');
+        var indicatorEl = document.getElementById('intel-page-indicator');
+
+        contentEl.innerHTML = '<h2>' + page.title + '</h2>' + page.body;
+
+        var btns = page.buttons || [
+            { label: 'NEXT', action: 'next', primary: true },
+            { label: 'BACK', action: 'back' }
+        ];
+
+        // Add BACK button if not on first page and no custom buttons
+        if (!page.buttons && intelPage === 0) {
+            btns = [{ label: 'NEXT', action: 'next', primary: true }];
+        }
+
+        buttonsEl.innerHTML = btns.map(function(b) {
+            var cls = b.primary ? 'intel-btn primary' : 'intel-btn';
+            return '<button class="' + cls + '" onclick="intelAction(\'' + b.action + '\')">' + b.label + '</button>';
+        }).join('');
+
+        indicatorEl.textContent = (intelPage + 1) + ' / ' + intelPages.length;
+    }
+
+    function intelAction(action) {
+        if (action === 'close') {
+            closeIntel();
+        } else if (action === 'next') {
+            if (intelPage < intelPages.length - 1) {
+                intelPage++;
+                renderIntelPage();
+            }
+        } else if (action === 'back') {
+            if (intelPage > 0) {
+                intelPage--;
+                renderIntelPage();
+            }
+        } else if (action === 'fullBriefing') {
+            intelPages = INTEL_PAGES_QUICK.concat(INTEL_PAGES_FULL);
+            intelPage = 1;
+            renderIntelPage();
+        }
+    }
+
+    // Show popup on first visit
+    if (!localStorage.getItem('riskTerminal_seen')) {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(openIntel, 1500);
+        });
     }
 
     // ============================================
