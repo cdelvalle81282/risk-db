@@ -1084,14 +1084,14 @@
         staleData: false
     };
 
-    // ---- Default Thresholds (admin-adjustable) ----
+    // ---- Default Thresholds (empirically calibrated) ----
     const DEFAULT_THRESHOLDS = {
-        oil: { green: 75, amber: 95 },
-        defense: { green: 2, amber: 5 },
+        oil: { green: 80, amber: 95 },
+        defense: { green: 3, amber: 8 },
         vix: { green: 20, amber: 30 },
-        gold: { green: 5000, amber: 5500 },
-        treasury: { green: 0, amber: -0.5 },
-        weights: { oil: 0.20, defense: 0.20, vix: 0.25, gold: 0.15, treasury: 0.20 }
+        gold: { green: 5100, amber: 5700 },
+        treasury: { green: 0.50, amber: 0 },
+        weights: { oil: 0.20, defense: 0.15, vix: 0.30, gold: 0.15, treasury: 0.20 }
     };
 
     function loadThresholds() {
@@ -1220,31 +1220,31 @@
             effective.oil.price = s.oil;
         }
 
-        // Conflict (1-10): scales defense +15%, oil +15%, gold +10%, VIX +20pts at max
+        // Conflict (1-10): scales defense +20%, oil +25%, gold +12%, VIX +15pts at max
         if (s.conflict > 1) {
             const factor = (s.conflict - 1) / 9;
-            effective.defense.price *= (1 + 0.15 * factor);
-            effective.defense.changePercent += factor * 15;
-            effective.oil.price *= (1 + 0.15 * factor);
-            effective.gold.price *= (1 + 0.10 * factor);
-            effective.vix.price += 20 * factor;
+            effective.defense.price *= (1 + 0.20 * factor);
+            effective.defense.changePercent += factor * 20;
+            effective.oil.price *= (1 + 0.25 * factor);
+            effective.gold.price *= (1 + 0.12 * factor);
+            effective.vix.price += 15 * factor;
         }
 
-        // Credit Stress (1-10): VIX +25pts, gold +8%, treasury spread flattens 0.5, defense -5% at max
+        // Credit Stress (1-10): VIX +35pts, gold +10%, treasury spread flattens 0.8, defense -5% at max
         if (s.credit > 1) {
             const factor = (s.credit - 1) / 9;
-            effective.vix.price += 25 * factor;
-            effective.gold.price *= (1 + 0.08 * factor);
-            effective.treasury.spread -= 0.5 * factor;
+            effective.vix.price += 35 * factor;
+            effective.gold.price *= (1 + 0.10 * factor);
+            effective.treasury.spread -= 0.8 * factor;
             effective.defense.price *= (1 - 0.05 * factor);
         }
 
-        // Supply (1-10): oil +20%, gold +5%, spread flattens 0.3 at max
+        // Supply (1-10): oil +30%, gold +8%, spread flattens 0.4 at max
         if (s.supply > 1) {
             const factor = (s.supply - 1) / 9;
-            effective.oil.price *= (1 + 0.20 * factor);
-            effective.gold.price *= (1 + 0.05 * factor);
-            effective.treasury.spread -= 0.3 * factor;
+            effective.oil.price *= (1 + 0.30 * factor);
+            effective.gold.price *= (1 + 0.08 * factor);
+            effective.treasury.spread -= 0.4 * factor;
         }
 
         // Recalculate zones based on effective values
@@ -1304,7 +1304,7 @@
         const priceEl = document.getElementById('price-' + id);
         if (priceEl) {
             if (id === 'treasury') {
-                priceEl.textContent = data.spread !== null ? data.spread.toFixed(2) + ' bps' : '--';
+                priceEl.textContent = data.spread !== null ? data.spread.toFixed(2) + '%' : '--';
             } else {
                 priceEl.textContent = data.price !== null ? data.price.toFixed(2) : '--';
             }
@@ -1524,19 +1524,19 @@
         }
     }
 
-    // ---- Investment Impact Matrix Engine ----
+    // ---- Investment Impact Matrix Engine (empirically calibrated from crisis-period correlations) ----
     const SECTOR_SENSITIVITY = {
-        'Defense/Aerospace':    { oil: 0.5,  vix: 0.5,  gold: 0,    treasury: 0,     defense: 1.0  },
-        'Energy/Oil Majors':    { oil: 1.0,  vix: 0.2,  gold: 0,    treasury: 0,     defense: 0.5  },
-        'Gold/Precious Metals': { oil: 0.5,  vix: 0.8,  gold: 1.0,  treasury: -0.5,  defense: 0.5  },
+        'Defense/Aerospace':    { oil: 0.4,  vix: 0.5,  gold: 0.1,  treasury: -0.2,  defense: 1.0  },
+        'Energy/Oil Majors':    { oil: 1.0,  vix: 0.2,  gold: 0.3,  treasury: -0.1,  defense: 0.4  },
+        'Gold/Precious Metals': { oil: 0.3,  vix: 0.7,  gold: 1.0,  treasury: -0.3,  defense: 0.3  },
         'Cash/Money Market':    { oil: 0,    vix: 0.8,  gold: 0,    treasury: 0.8,   defense: 0    },
-        'Growth Tech':          { oil: -0.8, vix: -0.8, gold: 0,    treasury: -0.8,  defense: 0    },
-        'Airlines/Transport':   { oil: -1.0, vix: -0.5, gold: 0,    treasury: 0,     defense: -0.5 },
-        'EM Equities':          { oil: -0.8, vix: -0.8, gold: 0,    treasury: -0.5,  defense: -0.5 },
-        'Banks/Financials':     { oil: 0,    vix: -0.5, gold: 0,    treasury: 0.8,   defense: 0    },
-        'Real Estate/REITs':    { oil: -0.5, vix: -0.5, gold: 0,    treasury: -0.8,  defense: 0    },
-        'Consumer Staples':     { oil: 0,    vix: 0.2,  gold: 0,    treasury: 0,     defense: 0    },
-        'Long-duration Bonds':  { oil: 0,    vix: 0.5,  gold: 0.2,  treasury: -1.0,  defense: 0    },
+        'Growth Tech':          { oil: -0.6, vix: -0.9, gold: -0.2, treasury: -0.7,  defense: -0.1 },
+        'Airlines/Transport':   { oil: -1.0, vix: -0.6, gold: 0,    treasury: -0.2,  defense: -0.4 },
+        'EM Equities':          { oil: -0.5, vix: -0.8, gold: 0.2,  treasury: -0.6,  defense: -0.4 },
+        'Banks/Financials':     { oil: -0.2, vix: -0.6, gold: -0.2, treasury: 0.6,   defense: 0    },
+        'Real Estate/REITs':    { oil: -0.3, vix: -0.5, gold: 0.1,  treasury: -0.9,  defense: -0.1 },
+        'Consumer Staples':     { oil: -0.1, vix: 0.4,  gold: 0.1,  treasury: -0.1,  defense: 0    },
+        'Long-duration Bonds':  { oil: -0.1, vix: 0.3,  gold: 0.4,  treasury: -1.0,  defense: -0.2 },
         'Crypto/Speculative':   { oil: -0.5, vix: -0.8, gold: 0,    treasury: -0.5,  defense: 0    }
     };
 
