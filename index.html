@@ -125,6 +125,17 @@
             flex-shrink: 0;
         }
 
+        .header-left a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .header-left a:hover {
+            color: var(--text-green);
+            text-shadow: var(--glow-green);
+        }
+
         .header-title {
             font-size: 14px;
             font-weight: bold;
@@ -132,9 +143,9 @@
             text-transform: uppercase;
             color: var(--text-green);
             text-shadow: var(--glow-green);
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .header-controls {
@@ -1137,7 +1148,7 @@
 
     <!-- ========== HEADER BAR ========== -->
     <header class="header-bar">
-        <div class="header-left">PUBLISHED BY OPTION PIT</div>
+        <div class="header-left"><a href="https://www.optionpit.com" target="_blank">PUBLISHED BY OPTION PIT</a></div>
         <div class="header-title">OPTION PIT'S GEOPOLITICAL RISK DASHBOARD</div>
         <div class="header-controls">
             <span class="live-indicator">
