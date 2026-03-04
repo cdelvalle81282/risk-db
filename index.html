@@ -116,6 +116,15 @@
             flex-shrink: 0;
         }
 
+        .header-left {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .header-title {
             font-size: 14px;
             font-weight: bold;
@@ -123,6 +132,9 @@
             text-transform: uppercase;
             color: var(--text-green);
             text-shadow: var(--glow-green);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .header-controls {
@@ -205,6 +217,24 @@
             color: var(--text-amber);
             border-color: var(--text-amber);
             text-shadow: var(--glow-amber);
+        }
+
+        .intel-toggle {
+            background: none;
+            border: 1px solid var(--border-green);
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            padding: 2px 8px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: color 0.3s, border-color 0.3s, text-shadow 0.3s;
+        }
+
+        .intel-toggle:hover {
+            color: var(--text-green);
+            border-color: var(--text-green);
+            text-shadow: var(--glow-green);
         }
 
         /* ============================================
@@ -642,6 +672,15 @@
             color: var(--text-green);
         }
 
+        .ticker-copyright {
+            font-size: 10px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            padding: 0 12px;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
         /* ============================================
            SCROLLBAR STYLING
            ============================================ */
@@ -859,6 +898,7 @@
 
     <!-- ========== HEADER BAR ========== -->
     <header class="header-bar">
+        <div class="header-left">PUBLISHED BY OPTION PIT</div>
         <div class="header-title">OPTION PIT'S GEOPOLITICAL RISK DASHBOARD</div>
         <div class="header-controls">
             <span class="live-indicator">
@@ -869,6 +909,7 @@
             <span id="last-update" class="last-update">LAST UPDATE: --:--:--</span>
             <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()">[SND:OFF]</button>
             <button class="admin-toggle" onclick="openAdmin()">[ADMIN]</button>
+            <button class="intel-toggle" onclick="openIntel()">[?] INTEL</button>
         </div>
     </header>
 
@@ -1035,6 +1076,7 @@
                 <span class="ticker-item"><span class="ticker-sym">MKT</span> <span class="ticker-val">MARKET FEED STANDBY</span></span>
             </div>
         </div>
+        <span class="ticker-copyright">&copy; 2026 Option Pit. All rights reserved.</span>
     </div>
 
     <!-- ========== ADMIN SETTINGS OVERLAY (Task 11) ========== -->
@@ -1970,10 +2012,10 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.value = 800; osc.type = 'square';
-        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-        osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.05);
+        osc.frequency.value = 880; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.15);
     }
 
     // ============================================
