@@ -2851,9 +2851,9 @@
             if (resp.ok) return await resp.json();
         } catch (e) { /* CORS blocked — try proxy */ }
 
-        // Try allorigins.win /get with up to 3 retries (proxy is flaky under load)
+        // Try allorigins.win /get with up to 3 retries
         for (let attempt = 0; attempt < 3; attempt++) {
-            if (attempt > 0) await new Promise(r => setTimeout(r, 500 * attempt));
+            if (attempt > 0) await new Promise(r => setTimeout(r, 800 * attempt));
             try {
                 const data = await fetchViaAllOrigins(url);
                 if (data) return data;
@@ -2870,6 +2870,15 @@
         const result = await fetchWithFallback(url);
         if (result?.chart?.result?.[0]) return result;
         return null;
+    }
+
+    // ---- fetchBatch: fetch an array of symbols in sequence to avoid overwhelming the proxy ----
+    async function fetchBatch(symbols) {
+        const results = [];
+        for (const sym of symbols) {
+            results.push(await fetchYahoo(sym));
+        }
+        return results;
     }
 
     // ---- parseYahooChart: extract price/change/history from Yahoo response ----
@@ -2892,19 +2901,10 @@
     async function fetchAllData() {
         const liveIndicator = document.querySelector('.live-indicator');
         try {
-            const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y5Data, y10Data, y30Data] =
-                await Promise.all([
-                    fetchYahoo('CL=F'),
-                    fetchYahoo('^VIX'),
-                    fetchYahoo('GC=F'),
-                    fetchYahoo('LMT'),
-                    fetchYahoo('RTX'),
-                    fetchYahoo('NOC'),
-                    fetchYahoo('GD'),
-                    fetchYahoo('^FVX'),
-                    fetchYahoo('^TNX'),
-                    fetchYahoo('^TYX')
-                ]);
+            // Fetch in batches of 2-3 to avoid overwhelming the CORS proxy
+            const [oilData, vixData, goldData] = await fetchBatch(['CL=F', '^VIX', 'GC=F']);
+            const [lmtData, rtxData, nocData] = await fetchBatch(['LMT', 'RTX', 'NOC']);
+            const [gdData, y5Data, y10Data, y30Data] = await fetchBatch(['GD', '^FVX', '^TNX', '^TYX']);
 
             // Parse treasury yields from Yahoo (price = yield %)
             const y5Raw = parseYahooChart(y5Data);
