@@ -1384,7 +1384,7 @@
             defense: { price: null, change: null, changePercent: null, history: [] },
             vix: { price: null, change: null, changePercent: null, history: [] },
             gold: { price: null, change: null, changePercent: null, history: [] },
-            treasury: { y2: null, y10: null, y30: null, spread: null, history: [] }
+            treasury: { y5: null, y10: null, y30: null, spread: null, history: [] }
         },
         scenario: { oil: null, conflict: 7, credit: 3, supply: 5 },
         zones: { oil: 'GREEN', defense: 'GREEN', vix: 'GREEN', gold: 'GREEN', treasury: 'GREEN' },
@@ -1400,7 +1400,7 @@
         defense: { green: 3, amber: 8 },
         vix: { green: 20, amber: 30 },
         gold: { green: 5100, amber: 5700 },
-        treasury: { green: 0.50, amber: 0 },
+        treasury: { green: 0.30, amber: 0 },
         weights: { oil: 0.20, defense: 0.15, vix: 0.30, gold: 0.15, treasury: 0.20 }
     };
 
@@ -1522,7 +1522,7 @@
             defense: { price: live.defense.price, change: live.defense.change, changePercent: live.defense.changePercent, history: live.defense.history.slice() },
             vix: { price: live.vix.price, change: live.vix.change, changePercent: live.vix.changePercent, history: live.vix.history.slice() },
             gold: { price: live.gold.price, change: live.gold.change, changePercent: live.gold.changePercent, history: live.gold.history.slice() },
-            treasury: { y2: live.treasury.y2, y10: live.treasury.y10, y30: live.treasury.y30, spread: live.treasury.spread, history: live.treasury.history.slice() }
+            treasury: { y5: live.treasury.y5, y10: live.treasury.y10, y30: live.treasury.y30, spread: live.treasury.spread, history: live.treasury.history.slice() }
         };
 
         // Oil dial overrides oil price directly
@@ -1647,7 +1647,7 @@
             }
 
             if (id === 'treasury') {
-                changeEl.textContent = arrow + ' 2Y:' + (data.y2 !== null ? data.y2.toFixed(2) : '--') +
+                changeEl.textContent = arrow + ' 5Y:' + (data.y5 !== null ? data.y5.toFixed(2) : '--') +
                     ' | 10Y:' + (data.y10 !== null ? data.y10.toFixed(2) : '--') +
                     ' | 30Y:' + (data.y30 !== null ? data.y30.toFixed(2) : '--');
             } else {
@@ -2538,8 +2538,8 @@
         treasury: '<h2>INTEL BRIEFING: TREASURY YIELD CURVE &mdash; THE RECESSION RADAR</h2>' +
 
              '<h3>WHAT IT IS</h3>' +
-             '<p>We track the difference between 10-year and 2-year Treasury yields. Normally, you earn more for lending money for 10 years than for 2 years. That makes sense &mdash; more time, more risk, more reward.</p>' +
-             '<p>When that flips &mdash; when 2-year yields pay more than 10-year yields &mdash; it\'s called an "inversion." It means the bond market thinks the near future is more dangerous than the distant future. That\'s a recession warning.</p>' +
+             '<p>We track the difference between 10-year and 5-year Treasury yields. Normally, you earn more for lending money for 10 years than for 5 years. That makes sense &mdash; more time, more risk, more reward.</p>' +
+             '<p>When that flips &mdash; when 5-year yields pay more than 10-year yields &mdash; it\'s called an "inversion." It means the bond market thinks the near future is more dangerous than the distant future. That\'s a recession warning.</p>' +
 
              '<h3>WHY IT\'S ON THIS DASHBOARD</h3>' +
              '<p>The yield curve has predicted 6 out of the last 7 recessions. That\'s an 87% hit rate going back decades. The Federal Reserve Bank of New York, the San Francisco Fed, and academic researchers all agree: when this curve inverts, pay attention.</p>' +
@@ -2737,9 +2737,6 @@
                 { label: 'VIX Weight', key: 'weights.vix', value: thresholds.weights.vix },
                 { label: 'Gold Weight', key: 'weights.gold', value: thresholds.weights.gold },
                 { label: 'Treasury Weight', key: 'weights.treasury', value: thresholds.weights.treasury }
-            ]},
-            { title: 'API CONFIGURATION', fields: [
-                { label: 'FRED API Key', key: 'fredApiKey', value: localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY', type: 'text' }
             ]}
         ];
 
@@ -2779,10 +2776,6 @@
         const inputs = document.querySelectorAll('#admin-fields input');
         inputs.forEach(input => {
             const key = input.dataset.key;
-            if (key === 'fredApiKey') {
-                localStorage.setItem('riskTerminal_fredKey', input.value);
-                return;
-            }
             const parts = key.split('.');
             if (parts.length === 2) {
                 if (!thresholds[parts[0]]) thresholds[parts[0]] = {};
@@ -2838,29 +2831,48 @@
     // Task 8: API Data Fetching (Yahoo Finance + FRED)
     // ============================================
 
-    // ---- CORS proxy and API key config ----
-    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-    // FRED_API_KEY is now read dynamically inside fetchFRED()
+    // ---- CORS proxy config ----
 
-    // ---- fetchWithFallback: direct fetch, then CORS proxy ----
+    // ---- fetchViaAllOrigins: uses /get endpoint which wraps response in {contents: "..."} ----
+    async function fetchViaAllOrigins(url) {
+        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+        const resp = await fetch(proxyUrl);
+        if (!resp.ok) return null;
+        const wrapper = await resp.json();
+        if (!wrapper?.contents) return null;
+        return JSON.parse(wrapper.contents);
+    }
+
+    // ---- fetchWithFallback: direct fetch, then allorigins /get proxy ----
     async function fetchWithFallback(url) {
+        // Try direct fetch first (works if CORS headers present, e.g. FRED)
         try {
             const resp = await fetch(url);
             if (resp.ok) return await resp.json();
-            throw new Error('HTTP ' + resp.status);
+        } catch (e) { /* CORS blocked — try proxy */ }
+
+        // Try allorigins.win /get endpoint (wraps response in contents field)
+        try {
+            const data = await fetchViaAllOrigins(url);
+            if (data) return data;
         } catch (e) {
-            try {
-                const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
-                if (resp.ok) return await resp.json();
-            } catch (e2) { /* fall through */ }
-            return null;
+            console.warn('allorigins proxy failed for:', url, e.message);
         }
+
+        console.warn('All fetch attempts failed for:', url);
+        return null;
     }
 
     // ---- fetchYahoo: Yahoo Finance v8 chart endpoint ----
     async function fetchYahoo(symbol) {
-        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol + '?range=3d&interval=15m';
-        return fetchWithFallback(url);
+        const encodedSymbol = encodeURIComponent(symbol);
+        // Try query1 first, then query2 as fallback
+        for (const host of ['query1', 'query2']) {
+            const url = 'https://' + host + '.finance.yahoo.com/v8/finance/chart/' + encodedSymbol + '?range=3d&interval=15m';
+            const result = await fetchWithFallback(url);
+            if (result?.chart?.result?.[0]) return result;
+        }
+        return null;
     }
 
     // ---- parseYahooChart: extract price/change/history from Yahoo response ----
@@ -2879,22 +2891,11 @@
         };
     }
 
-    // ---- fetchFRED: FRED API series observations ----
-    async function fetchFRED(series) {
-        const apiKey = localStorage.getItem('riskTerminal_fredKey') || 'DEMO_KEY';
-        const url = 'https://api.stlouisfed.org/fred/series/observations?series_id=' + series +
-            '&api_key=' + apiKey + '&file_type=json&sort_order=desc&limit=5';
-        const data = await fetchWithFallback(url);
-        if (!data?.observations?.length) return null;
-        const val = parseFloat(data.observations[0].value);
-        return isNaN(val) ? null : val;
-    }
-
     // ---- fetchAllData: master fetch, updates DashboardState.live ----
     async function fetchAllData() {
         const liveIndicator = document.querySelector('.live-indicator');
         try {
-            const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y2, y10, y30] =
+            const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y5Data, y10Data, y30Data] =
                 await Promise.all([
                     fetchYahoo('CL=F'),
                     fetchYahoo('^VIX'),
@@ -2903,22 +2904,34 @@
                     fetchYahoo('RTX'),
                     fetchYahoo('NOC'),
                     fetchYahoo('GD'),
-                    fetchFRED('DGS2'),
-                    fetchFRED('DGS10'),
-                    fetchFRED('DGS30')
+                    fetchYahoo('^FVX'),
+                    fetchYahoo('^TNX'),
+                    fetchYahoo('^TYX')
                 ]);
+
+            // Parse treasury yields from Yahoo (price = yield %)
+            const y5Raw = parseYahooChart(y5Data);
+            const y10Raw = parseYahooChart(y10Data);
+            const y30Raw = parseYahooChart(y30Data);
+            const y5 = y5Raw ? y5Raw.price : null;
+            const y10 = y10Raw ? y10Raw.price : null;
+            const y30 = y30Raw ? y30Raw.price : null;
+
+            // Track how many feeds actually returned data
+            let liveFeeds = 0;
+            const totalFeeds = 5; // oil, vix, gold, defense, treasury
 
             // Oil
             const oil = parseYahooChart(oilData);
-            if (oil) Object.assign(DashboardState.live.oil, oil);
+            if (oil) { Object.assign(DashboardState.live.oil, oil); liveFeeds++; }
 
             // VIX
             const vix = parseYahooChart(vixData);
-            if (vix) Object.assign(DashboardState.live.vix, vix);
+            if (vix) { Object.assign(DashboardState.live.vix, vix); liveFeeds++; }
 
             // Gold
             const gold = parseYahooChart(goldData);
-            if (gold) Object.assign(DashboardState.live.gold, gold);
+            if (gold) { Object.assign(DashboardState.live.gold, gold); liveFeeds++; }
 
             // Defense average
             const defenseStocks = [lmtData, rtxData, nocData, gdData].map(parseYahooChart).filter(Boolean);
@@ -2929,36 +2942,66 @@
                 DashboardState.live.defense.changePercent = avgChange;
                 DashboardState.live.defense.change = avgChange;
                 DashboardState.live.defense.history = defenseStocks[0].history;
+                liveFeeds++;
             }
 
-            // Treasury
-            if (y2 != null && y10 != null) {
-                DashboardState.live.treasury.y2 = y2;
+            // Treasury (5Y/10Y/30Y from Yahoo Finance)
+            if (y5 != null && y10 != null) {
+                DashboardState.live.treasury.y5 = y5;
                 DashboardState.live.treasury.y10 = y10;
                 DashboardState.live.treasury.y30 = y30;
-                DashboardState.live.treasury.spread = y10 - y2;
-                DashboardState.live.treasury.history.push(y10 - y2);
+                DashboardState.live.treasury.spread = y10 - y5;
+                DashboardState.live.treasury.history.push(y10 - y5);
                 if (DashboardState.live.treasury.history.length > 30) DashboardState.live.treasury.history.shift();
+                liveFeeds++;
             }
 
-            DashboardState.lastUpdate = new Date();
-            DashboardState.staleData = false;
-            liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE';
-            liveIndicator.style.color = '';
+            // Only show LIVE if at least one feed returned real data
+            if (liveFeeds > 0) {
+                DashboardState.lastUpdate = new Date();
+                DashboardState.staleData = false;
+                if (liveFeeds === totalFeeds) {
+                    liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE';
+                    liveIndicator.style.color = '';
+                } else {
+                    liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE (' + liveFeeds + '/' + totalFeeds + ')';
+                    liveIndicator.style.color = 'var(--text-amber)';
+                    console.warn('Partial data: ' + liveFeeds + '/' + totalFeeds + ' feeds live. Failed:' +
+                        (!oil ? ' OIL' : '') + (!vix ? ' VIX' : '') + (!gold ? ' GOLD' : '') +
+                        (defenseStocks.length === 0 ? ' DEFENSE' : '') + (y5 == null ? ' TREASURY' : ''));
+                }
 
-            // Update last-update timestamp display (Task 15)
-            const lastUpdateEl = document.getElementById('last-update');
-            if (lastUpdateEl) {
-                const now = DashboardState.lastUpdate;
-                const hh = String(now.getUTCHours()).padStart(2, '0');
-                const mm = String(now.getUTCMinutes()).padStart(2, '0');
-                const ss = String(now.getUTCSeconds()).padStart(2, '0');
-                lastUpdateEl.textContent = 'LAST UPDATE: ' + hh + ':' + mm + ':' + ss;
-                lastUpdateEl.style.color = 'var(--text-green)';
+                // Update last-update timestamp display (Task 15)
+                const lastUpdateEl = document.getElementById('last-update');
+                if (lastUpdateEl) {
+                    const now = DashboardState.lastUpdate;
+                    const hh = String(now.getUTCHours()).padStart(2, '0');
+                    const mm = String(now.getUTCMinutes()).padStart(2, '0');
+                    const ss = String(now.getUTCSeconds()).padStart(2, '0');
+                    lastUpdateEl.textContent = 'LAST UPDATE: ' + hh + ':' + mm + ':' + ss;
+                    lastUpdateEl.style.color = liveFeeds === totalFeeds ? 'var(--text-green)' : 'var(--text-amber)';
+                }
+
+                // Cache to localStorage
+                localStorage.setItem('riskTerminal_cache', JSON.stringify(DashboardState.live));
+            } else {
+                console.error('All data feeds failed — no live data received');
+                DashboardState.staleData = true;
+                liveIndicator.innerHTML = '⚠ STALE DATA';
+                liveIndicator.style.color = 'var(--text-red)';
+
+                const lastUpdateEl = document.getElementById('last-update');
+                if (lastUpdateEl) {
+                    lastUpdateEl.textContent = 'NO LIVE DATA';
+                    lastUpdateEl.style.color = 'var(--text-red)';
+                }
+
+                // Try loading from cache
+                const cached = localStorage.getItem('riskTerminal_cache');
+                if (cached) {
+                    try { Object.assign(DashboardState.live, JSON.parse(cached)); } catch(e) {}
+                }
             }
-
-            // Cache to localStorage
-            localStorage.setItem('riskTerminal_cache', JSON.stringify(DashboardState.live));
 
         } catch (e) {
             console.error('Fetch error:', e);
@@ -2986,7 +3029,7 @@
     DashboardState.live.defense = { price: 505.59, change: 17.85, changePercent: 3.66, history: [478,480,482,481,485,483,487,486,490,488,492,491,494,492,495,493,496,495,498,497,500,499,502,500,503,501,504,503,505,505.59] };
     DashboardState.live.vix = { price: 20.40, change: 0.54, changePercent: 2.72, history: [18.5,18.8,18.6,19.0,18.8,19.2,19.0,19.4,19.2,19.5,19.3,19.6,19.4,19.8,19.5,19.9,19.7,20.0,19.8,20.1,19.9,20.2,20.0,20.3,20.1,20.4,20.2,20.3,20.35,20.40] };
     DashboardState.live.gold = { price: 5350.00, change: 27.88, changePercent: 0.52, history: [5180,5195,5210,5200,5220,5215,5235,5225,5245,5240,5260,5250,5270,5265,5280,5275,5290,5285,5300,5295,5310,5305,5320,5315,5330,5325,5340,5335,5345,5350] };
-    DashboardState.live.treasury = { y2: 3.38, y10: 3.97, y30: 4.64, spread: 0.59, history: [0.45,0.46,0.48,0.47,0.49,0.48,0.50,0.49,0.51,0.50,0.52,0.51,0.53,0.52,0.54,0.53,0.55,0.54,0.56,0.55,0.57,0.56,0.58,0.57,0.58,0.57,0.59,0.58,0.59,0.59] };
+    DashboardState.live.treasury = { y5: 3.73, y10: 4.14, y30: 4.76, spread: 0.41, history: [0.35,0.36,0.37,0.36,0.38,0.37,0.39,0.38,0.40,0.39,0.40,0.39,0.41,0.40,0.41,0.40,0.42,0.41,0.42,0.41,0.42,0.41,0.41,0.40,0.41,0.40,0.41,0.40,0.41,0.41] };
     recalculate(); // Render immediately with mock data
 
     // ---- Initialize 3D Radar + Scenario Dials ----
