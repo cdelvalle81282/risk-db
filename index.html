@@ -1851,7 +1851,7 @@
     };
 
     function scoreSectors() {
-        const zoneScores = { GREEN: 0, AMBER: 50, RED: 100 };
+        const zoneScores = { GREEN: 10, AMBER: 50, RED: 100 };
         const z = DashboardState.zones;
         const scores = {};
 
@@ -1886,9 +1886,9 @@
         for (const [sector, score] of Object.entries(scores)) {
             const arrows = getArrows(score);
             const item = { name: sector, score: score, arrows: arrows };
-            if (score > 30) {
+            if (score > 5) {
                 favored.push(item);
-            } else if (score < -30) {
+            } else if (score < -5) {
                 avoid.push(item);
             } else {
                 neutral.push(item);
