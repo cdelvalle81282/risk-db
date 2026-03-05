@@ -2831,54 +2831,27 @@
     // Task 8: API Data Fetching (Yahoo Finance + FRED)
     // ============================================
 
-    // ---- CORS proxy config ----
+    // ---- CORS proxy (Cloudflare Worker) ----
+    const CORS_PROXY = 'https://risk-db-proxy.optionpit-risk.workers.dev/?url=';
 
-    // ---- fetchViaAllOrigins: uses /get endpoint which wraps response in {contents: "..."} ----
-    async function fetchViaAllOrigins(url) {
-        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
-        const resp = await fetch(proxyUrl);
-        if (!resp.ok) return null;
-        const wrapper = await resp.json();
-        if (!wrapper?.contents) return null;
-        return JSON.parse(wrapper.contents);
+    // ---- fetchViaProxy: fetch URL through CF Worker proxy ----
+    async function fetchViaProxy(url) {
+        const resp = await fetch(CORS_PROXY + encodeURIComponent(url));
+        if (!resp.ok) throw new Error('Proxy HTTP ' + resp.status);
+        return await resp.json();
     }
 
-    // ---- fetchWithFallback: direct fetch, then allorigins with retry ----
-    async function fetchWithFallback(url) {
-        // Try direct fetch first (works if CORS headers present)
-        try {
-            const resp = await fetch(url);
-            if (resp.ok) return await resp.json();
-        } catch (e) { /* CORS blocked — try proxy */ }
-
-        // Try allorigins.win /get with up to 3 retries
-        for (let attempt = 0; attempt < 3; attempt++) {
-            if (attempt > 0) await new Promise(r => setTimeout(r, 800 * attempt));
-            try {
-                const data = await fetchViaAllOrigins(url);
-                if (data) return data;
-            } catch (e) { /* retry */ }
-        }
-        console.warn('All fetch attempts failed for:', url);
-        return null;
-    }
-
-    // ---- fetchYahoo: Yahoo Finance v8 chart endpoint ----
+    // ---- fetchYahoo: Yahoo Finance v8 chart endpoint via proxy ----
     async function fetchYahoo(symbol) {
         const encodedSymbol = encodeURIComponent(symbol);
         const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodedSymbol + '?range=3d&interval=15m';
-        const result = await fetchWithFallback(url);
-        if (result?.chart?.result?.[0]) return result;
-        return null;
-    }
-
-    // ---- fetchBatch: fetch an array of symbols in sequence to avoid overwhelming the proxy ----
-    async function fetchBatch(symbols) {
-        const results = [];
-        for (const sym of symbols) {
-            results.push(await fetchYahoo(sym));
+        try {
+            const result = await fetchViaProxy(url);
+            if (result?.chart?.result?.[0]) return result;
+        } catch (e) {
+            console.warn('Fetch failed for ' + symbol + ':', e.message);
         }
-        return results;
+        return null;
     }
 
     // ---- parseYahooChart: extract price/change/history from Yahoo response ----
@@ -2901,10 +2874,19 @@
     async function fetchAllData() {
         const liveIndicator = document.querySelector('.live-indicator');
         try {
-            // Fetch in batches of 2-3 to avoid overwhelming the CORS proxy
-            const [oilData, vixData, goldData] = await fetchBatch(['CL=F', '^VIX', 'GC=F']);
-            const [lmtData, rtxData, nocData] = await fetchBatch(['LMT', 'RTX', 'NOC']);
-            const [gdData, y5Data, y10Data, y30Data] = await fetchBatch(['GD', '^FVX', '^TNX', '^TYX']);
+            const [oilData, vixData, goldData, lmtData, rtxData, nocData, gdData, y5Data, y10Data, y30Data] =
+                await Promise.all([
+                    fetchYahoo('CL=F'),
+                    fetchYahoo('^VIX'),
+                    fetchYahoo('GC=F'),
+                    fetchYahoo('LMT'),
+                    fetchYahoo('RTX'),
+                    fetchYahoo('NOC'),
+                    fetchYahoo('GD'),
+                    fetchYahoo('^FVX'),
+                    fetchYahoo('^TNX'),
+                    fetchYahoo('^TYX')
+                ]);
 
             // Parse treasury yields from Yahoo (price = yield %)
             const y5Raw = parseYahooChart(y5Data);
