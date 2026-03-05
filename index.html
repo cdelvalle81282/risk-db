@@ -2843,22 +2843,22 @@
         return JSON.parse(wrapper.contents);
     }
 
-    // ---- fetchWithFallback: direct fetch, then allorigins /get proxy ----
+    // ---- fetchWithFallback: direct fetch, then allorigins with retry ----
     async function fetchWithFallback(url) {
-        // Try direct fetch first (works if CORS headers present, e.g. FRED)
+        // Try direct fetch first (works if CORS headers present)
         try {
             const resp = await fetch(url);
             if (resp.ok) return await resp.json();
         } catch (e) { /* CORS blocked — try proxy */ }
 
-        // Try allorigins.win /get endpoint (wraps response in contents field)
-        try {
-            const data = await fetchViaAllOrigins(url);
-            if (data) return data;
-        } catch (e) {
-            console.warn('allorigins proxy failed for:', url, e.message);
+        // Try allorigins.win /get with up to 3 retries (proxy is flaky under load)
+        for (let attempt = 0; attempt < 3; attempt++) {
+            if (attempt > 0) await new Promise(r => setTimeout(r, 500 * attempt));
+            try {
+                const data = await fetchViaAllOrigins(url);
+                if (data) return data;
+            } catch (e) { /* retry */ }
         }
-
         console.warn('All fetch attempts failed for:', url);
         return null;
     }
@@ -2866,12 +2866,9 @@
     // ---- fetchYahoo: Yahoo Finance v8 chart endpoint ----
     async function fetchYahoo(symbol) {
         const encodedSymbol = encodeURIComponent(symbol);
-        // Try query1 first, then query2 as fallback
-        for (const host of ['query1', 'query2']) {
-            const url = 'https://' + host + '.finance.yahoo.com/v8/finance/chart/' + encodedSymbol + '?range=3d&interval=15m';
-            const result = await fetchWithFallback(url);
-            if (result?.chart?.result?.[0]) return result;
-        }
+        const url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + encodedSymbol + '?range=3d&interval=15m';
+        const result = await fetchWithFallback(url);
+        if (result?.chart?.result?.[0]) return result;
         return null;
     }
 
