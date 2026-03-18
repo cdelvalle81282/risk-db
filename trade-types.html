@@ -835,23 +835,37 @@
                         <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
                         <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
                         <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
-                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
-                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
-                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
-                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
-                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
-                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
-                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
-                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
-                        <polyline points="60,165 260,165 460,55" class="chart-line" stroke="#34d399"/>
-                        <polygon points="60,165 260,165 460,55 460,130 260,130 60,130" fill="#34d399" class="chart-area"/>
+                        <!-- Loss zone (red) -->
+                        <polygon points="60,130 60,165 260,165 324,130" fill="rgba(248,113,113,0.15)"/>
+                        <!-- Profit zone (green) -->
+                        <polygon points="324,130 460,55 460,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Payoff line -->
+                        <polyline points="60,165 260,165 460,55" class="chart-line" stroke="white" stroke-width="2.5"/>
+                        <!-- Zone labels -->
+                        <text x="155" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="405" y="100" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <!-- Strike marker -->
                         <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
-                        <text x="260" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Strike</text>
+                        <text x="260" y="222" class="chart-annotation" text-anchor="middle">Strike $100</text>
+                        <!-- Breakeven marker -->
+                        <circle cx="324" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <text x="324" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <!-- Max loss annotation -->
+                        <line x1="62" y1="165" x2="62" y2="130" stroke="rgba(248,113,113,0.5)" stroke-width="1.5" marker-start="url(#arrowDown)" marker-end="url(#arrowUp)"/>
+                        <text x="75" y="150" fill="#f87171" font-family="Karla" font-size="9">Max loss =</text>
+                        <text x="75" y="161" fill="#f87171" font-family="Karla" font-size="9">premium paid</text>
+                        <!-- Axis labels -->
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="210" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="210" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="360" y="210" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="210" class="chart-annotation" text-anchor="middle">$120</text>
                     </svg>
                 </div>
                 <div class="card">
                     <div><span style="color:#34d399;"><strong>Long Call</strong></span> &nbsp;+C</div>
-                    <p>Simple bet the stock goes up. Unlimited upside, loss limited to premium paid.</p>
+                    <p><strong>You make money</strong> when the stock rises above your breakeven (strike + premium paid).</p>
+                    <p><strong>You lose money</strong> when the stock stays flat or drops. The most you can lose is the premium you paid. There&rsquo;s no limit to how much you can make &mdash; the higher the stock goes, the more you profit.</p>
                 </div>
             </div>
 
@@ -864,23 +878,36 @@
                         <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
                         <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
                         <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
-                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
-                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
-                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
-                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
-                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
-                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
-                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
-                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
-                        <polyline points="60,55 260,165 460,165" class="chart-line" stroke="#f87171"/>
-                        <polygon points="60,55 260,165 260,130 60,130" fill="#f87171" class="chart-area"/>
+                        <!-- Profit zone (green) -->
+                        <polygon points="60,55 196,130 60,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Loss zone (red) -->
+                        <polygon points="196,130 260,165 460,165 460,130" fill="rgba(248,113,113,0.15)"/>
+                        <!-- Payoff line -->
+                        <polyline points="60,55 260,165 460,165" class="chart-line" stroke="white" stroke-width="2.5"/>
+                        <!-- Zone labels -->
+                        <text x="105" y="100" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="365" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <!-- Strike marker -->
                         <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
-                        <text x="260" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Strike</text>
+                        <text x="260" y="222" class="chart-annotation" text-anchor="middle">Strike $100</text>
+                        <!-- Breakeven marker -->
+                        <circle cx="196" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <text x="196" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <!-- Max loss annotation -->
+                        <text x="440" y="150" fill="#f87171" font-family="Karla" font-size="9" text-anchor="end">Max loss =</text>
+                        <text x="440" y="161" fill="#f87171" font-family="Karla" font-size="9" text-anchor="end">premium paid</text>
+                        <!-- Axis labels -->
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="210" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="210" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="360" y="210" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="210" class="chart-annotation" text-anchor="middle">$120</text>
                     </svg>
                 </div>
                 <div class="card">
                     <div><span style="color:#f87171;"><strong>Long Put</strong></span> &nbsp;+P</div>
-                    <p>Simple bet the stock goes down. Profits as stock falls, loss limited to premium paid.</p>
+                    <p><strong>You make money</strong> when the stock falls below your breakeven (strike &minus; premium paid).</p>
+                    <p><strong>You lose money</strong> when the stock stays flat or rises. The most you can lose is the premium you paid. The further the stock drops, the more you profit.</p>
                 </div>
             </div>
 
@@ -893,25 +920,34 @@
                         <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
                         <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
                         <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
-                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
-                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
-                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
-                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
-                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
-                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
-                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
-                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
-                        <polyline points="60,165 210,165 360,90 460,90" class="chart-line" stroke="#60a5fa"/>
-                        <polygon points="210,165 360,90 360,130 210,130" fill="#60a5fa" class="chart-area"/>
+                        <!-- Loss zone (red) -->
+                        <polygon points="60,130 60,165 210,165 280,130" fill="rgba(248,113,113,0.15)"/>
+                        <!-- Profit zone (green) -->
+                        <polygon points="280,130 360,90 460,90 460,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Payoff line -->
+                        <polyline points="60,165 210,165 360,90 460,90" class="chart-line" stroke="white" stroke-width="2.5"/>
+                        <!-- Zone labels -->
+                        <text x="150" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="385" y="118" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <!-- Strike markers -->
                         <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="210" y="222" class="chart-annotation" text-anchor="middle">Long strike</text>
                         <line x1="360" y1="130" x2="360" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
-                        <text x="210" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Long</text>
-                        <text x="360" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Short</text>
+                        <text x="360" y="222" class="chart-annotation" text-anchor="middle">Short strike</text>
+                        <!-- Breakeven marker -->
+                        <circle cx="280" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <text x="280" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <!-- Max annotations -->
+                        <text x="75" y="155" fill="#f87171" font-family="Karla" font-size="9">Max loss = debit paid</text>
+                        <text x="445" y="85" fill="#34d399" font-family="Karla" font-size="9" text-anchor="end">Max profit = capped</text>
+                        <!-- Axis labels -->
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
                 </div>
                 <div class="card">
                     <div><span style="color:#60a5fa;"><strong>Bull Call Spread</strong></span> &nbsp;+C, -C</div>
-                    <p>Capped upside, reduced cost. Max profit at short strike, limited loss.</p>
+                    <p><strong>You make money</strong> when the stock rises above the breakeven. Max profit hits when the stock reaches the short strike or higher.</p>
+                    <p><strong>You lose money</strong> when the stock stays below the breakeven. The most you can lose is the debit (the amount you paid to enter). Your profit is capped at the difference between the two strikes minus the debit.</p>
                 </div>
             </div>
 
@@ -924,25 +960,34 @@
                         <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
                         <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
                         <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
-                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
-                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
-                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
-                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
-                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
-                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
-                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
-                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
-                        <polyline points="60,90 210,90 360,165 460,165" class="chart-line" stroke="#a78bfa"/>
-                        <polygon points="60,90 210,90 210,130 60,130" fill="#a78bfa" class="chart-area"/>
+                        <!-- Profit zone (green) -->
+                        <polygon points="60,90 210,90 290,130 60,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Loss zone (red) -->
+                        <polygon points="290,130 360,165 460,165 460,130" fill="rgba(248,113,113,0.15)"/>
+                        <!-- Payoff line -->
+                        <polyline points="60,90 210,90 360,165 460,165" class="chart-line" stroke="white" stroke-width="2.5"/>
+                        <!-- Zone labels -->
+                        <text x="140" y="118" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="390" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <!-- Strike markers -->
                         <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="210" y="222" class="chart-annotation" text-anchor="middle">Long strike</text>
                         <line x1="360" y1="130" x2="360" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
-                        <text x="210" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Long</text>
-                        <text x="360" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Short</text>
+                        <text x="360" y="222" class="chart-annotation" text-anchor="middle">Short strike</text>
+                        <!-- Breakeven marker -->
+                        <circle cx="290" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <text x="290" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <!-- Max annotations -->
+                        <text x="75" y="85" fill="#34d399" font-family="Karla" font-size="9">Max profit = capped</text>
+                        <text x="445" y="155" fill="#f87171" font-family="Karla" font-size="9" text-anchor="end">Max loss = debit paid</text>
+                        <!-- Axis labels -->
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
                 </div>
                 <div class="card">
                     <div><span style="color:#a78bfa;"><strong>Bear Put Spread</strong></span> &nbsp;+P, -P</div>
-                    <p>Capped downside bet, reduced cost. Max profit at short strike, limited loss.</p>
+                    <p><strong>You make money</strong> when the stock falls below the breakeven. Max profit hits when the stock reaches the short strike or lower.</p>
+                    <p><strong>You lose money</strong> when the stock stays above the breakeven. The most you can lose is the debit. Your profit is capped at the difference between the two strikes minus the debit.</p>
                 </div>
             </div>
 
@@ -955,26 +1000,38 @@
                         <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
                         <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
                         <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
-                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
-                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
-                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
-                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
-                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
-                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
-                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
-                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
-                        <polyline points="60,70 180,170 340,170 460,70" class="chart-line" stroke="#fb923c"/>
-                        <polygon points="60,70 180,170 180,130 60,130" fill="#fb923c" class="chart-area"/>
-                        <polygon points="340,170 460,70 460,130 340,130" fill="#fb923c" class="chart-area"/>
+                        <!-- Left profit zone (green) -->
+                        <polygon points="60,70 132,130 60,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Loss zone (red) -->
+                        <polygon points="132,130 180,170 340,170 388,130" fill="rgba(248,113,113,0.15)"/>
+                        <!-- Right profit zone (green) -->
+                        <polygon points="388,130 460,70 460,130" fill="rgba(52,211,153,0.18)"/>
+                        <!-- Payoff line -->
+                        <polyline points="60,70 180,170 340,170 460,70" class="chart-line" stroke="white" stroke-width="2.5"/>
+                        <!-- Zone labels -->
+                        <text x="80" y="105" fill="#34d399" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">PROFIT</text>
+                        <text x="260" y="158" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="438" y="105" fill="#34d399" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">PROFIT</text>
+                        <!-- Strike markers -->
                         <line x1="180" y1="130" x2="180" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="180" y="222" class="chart-annotation" text-anchor="middle">Put strike</text>
                         <line x1="340" y1="130" x2="340" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
-                        <text x="180" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Put</text>
-                        <text x="340" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Call</text>
+                        <text x="340" y="222" class="chart-annotation" text-anchor="middle">Call strike</text>
+                        <!-- Breakeven markers -->
+                        <circle cx="132" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <circle cx="388" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
+                        <text x="132" y="120" fill="#fbbf24" font-family="Outfit" font-size="9" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="388" y="120" fill="#fbbf24" font-family="Outfit" font-size="9" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <!-- Max loss annotation -->
+                        <text x="260" y="172" fill="#f87171" font-family="Karla" font-size="9" text-anchor="middle">Max loss = both premiums</text>
+                        <!-- Axis labels -->
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
                 </div>
                 <div class="card">
                     <div><span style="color:#fb923c;"><strong>Long Strangle</strong></span> &nbsp;+C, +P</div>
-                    <p>Bet on big move in either direction. Profits from large moves up or down, loses if stock stays flat.</p>
+                    <p><strong>You make money</strong> when the stock makes a big move in <i>either</i> direction &mdash; past either breakeven point.</p>
+                    <p><strong>You lose money</strong> when the stock stays between the two strikes. The most you can lose is the total premium paid for both options. There&rsquo;s no limit to how much you can make if the stock moves far enough.</p>
                 </div>
             </div>
         </div>
