@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" id="top">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capitol Gains Trade Types</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-deep: #06090f;
+            --bg-primary: #0c1221;
+            --bg-card: #111b30;
+            --text-primary: #d0d9e8;
+            --text-secondary: #7b8ba5;
+            --text-heading: #edf2f9;
+            --green: #34d399;
+            --green-bg: rgba(52,211,153,0.07);
+            --green-border: rgba(52,211,153,0.30);
+            --red: #f87171;
+            --red-bg: rgba(248,113,113,0.07);
+            --red-border: rgba(248,113,113,0.30);
+            --amber: #fbbf24;
+            --amber-bg: rgba(251,191,36,0.07);
+            --amber-border: rgba(251,191,36,0.30);
+            --blue: #60a5fa;
+            --blue-bg: rgba(96,165,250,0.07);
+            --blue-border: rgba(96,165,250,0.30);
+            --border: #1a2744;
+            --radius: 10px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Karla', sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-primary);
+            background: radial-gradient(ellipse at 50% 0%, rgba(25,45,85,0.25) 0%, transparent 55%), var(--bg-deep);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 3rem;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; color: var(--text-heading); }
+        h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+        h2 { font-size: 1.55rem; font-weight: 600; margin-bottom: 1rem; padding-top: 0.5rem; }
+        h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.75rem; }
+        h4 { font-size: 1.1rem; font-weight: 600; }
+
+        p { margin-bottom: 0.9rem; }
+        a { color: var(--blue); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        strong { color: var(--text-heading); }
+        hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+        .subtitle { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 2rem; }
+
+        /* ── Table of Contents ── */
+        .toc { margin-bottom: 2.5rem; }
+        .toc h3 { margin-bottom: 0.5rem; }
+        .toc ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 1.5rem; }
+        .toc li { padding: 0.3rem 0; }
+        .toc a {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            border-bottom: 1px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .toc a:hover { color: var(--blue); border-bottom-color: var(--blue); opacity: 1; }
+
+        /* ── Grids ── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+
+        /* ── Cards ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.2rem;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.25s;
+        }
+        .card:hover { border-color: rgba(255,255,255,0.08); }
+        .card p { margin-bottom: 0.5rem; }
+        .card p:last-child { margin-bottom: 0; }
+
+        .card.green  { border-left: 4px solid var(--green);  background: linear-gradient(100deg, var(--green-bg), var(--bg-card) 50%); }
+        .card.red    { border-left: 4px solid var(--red);    background: linear-gradient(100deg, var(--red-bg), var(--bg-card) 50%); }
+        .card.yellow { border-left: 4px solid var(--amber);  background: linear-gradient(100deg, var(--amber-bg), var(--bg-card) 50%); }
+        .card.highlight { border-left: 4px solid var(--blue); background: linear-gradient(100deg, var(--blue-bg), var(--bg-card) 50%); }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-heading);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── Metaphor & Example boxes ── */
+        .metaphor {
+            background: var(--bg-card);
+            border-left: 3px solid var(--amber);
+            padding: 0.9rem 1.1rem;
+            margin: 0.8rem 0;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.94rem;
+        }
+
+        .example {
+            background: rgba(96,165,250,0.05);
+            border: 1px dashed rgba(96,165,250,0.25);
+            padding: 0.8rem 1rem;
+            margin: 0.6rem 0;
+            border-radius: var(--radius);
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+        }
+
+        .hierarchy {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius);
+            font-family: 'Outfit', monospace;
+            font-size: 0.95rem;
+            margin: 0.8rem 0;
+            line-height: 2;
+        }
+
+        .notation {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        /* ── Section ── */
+        section { margin-bottom: 2.5rem; }
+        .back-link { font-size: 0.88rem; margin-top: 1rem; display: inline-block; }
+
+        /* ── Trade Cards ── */
+        .trade-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.3rem 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .trade-card h4 { margin-bottom: 0.4rem; }
+        .trade-card .specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+        .spec-tag {
+            font-size: 0.78rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            white-space: nowrap;
+        }
+
+        /* ── Table (Decision Matrix) ── */
+        figure.table { margin: 1rem 0; overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        th, td {
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: rgba(96,165,250,0.08);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+        td { background: var(--bg-card); }
+        td i { color: var(--text-secondary); font-size: 0.88rem; }
+
+        /* ── Tabs ── */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .nav-tab {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .nav-tab:hover { border-color: rgba(255,255,255,0.15); color: var(--text-primary); }
+        .nav-tab.active {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: #fff;
+        }
+
+        /* ── Visual Sections ── */
+        .visual-section { display: none; }
+        .visual-section.active { display: block; }
+        .visual-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .visual-container svg { width: 100%; height: auto; max-width: 560px; }
+
+        .payoff-diagram { display: none; }
+        .payoff-diagram.active { display: block; }
+
+        /* ── SVG styles ── */
+        .chart-grid { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+        .chart-axis { stroke: rgba(255,255,255,0.15); stroke-width: 1.5; }
+        .chart-zero { stroke: rgba(255,255,255,0.12); stroke-width: 1; stroke-dasharray: 6,4; }
+        .chart-label { fill: var(--text-secondary); font-family: 'Outfit', sans-serif; font-size: 11px; }
+        .chart-title { fill: var(--text-heading); font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; }
+        .chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .chart-area { opacity: 0.10; }
+        .chart-dot { r: 4; }
+        .chart-annotation { fill: var(--text-secondary); font-family: 'Karla', sans-serif; font-size: 10px; }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 1.5rem 0 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Fade-in animation ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .toc ul { grid-template-columns: 1fr; }
+            h1 { font-size: 1.7rem; }
+            h2 { font-size: 1.3rem; }
+            .container { padding: 1.5rem 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <h1>Capitol Gains Trade Types</h1>
+    <p class="subtitle">A Complete Guide to Options Strategies</p>
+
+    <!-- Table of Contents -->
+    <nav class="toc fade-in">
+        <h3>Contents</h3>
+        <ul>
+            <li><a href="#philosophy">The Core Philosophy</a></li>
+            <li><a href="#theta">What is Theta?</a></li>
+            <li><a href="#strikes">Strike Selection</a></li>
+            <li><a href="#expirations">Expiration Selection</a></li>
+            <li><a href="#volatility">Understanding Volatility</a></li>
+            <li><a href="#matrix">The Decision Matrix</a></li>
+            <li><a href="#trades">The Trade Types</a></li>
+            <li><a href="#visuals">Interactive Visuals</a></li>
+        </ul>
+    </nav>
+
+    <!-- The Core Philosophy -->
+    <section id="philosophy" class="fade-in">
+        <h2>The Core Philosophy</h2>
+        <p>Every Capitol Gains trade is designed with two legs that balance each other:</p>
+        <div class="grid-2">
+            <div class="card green">
+                <div class="card-title">Theta 1</div>
+                <p>The high-conviction side, where the team expects the stock to move in a specific direction.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Theta 2</div>
+                <p>The upside potential side, which can produce bonus gains if the stock really runs.</p>
+            </div>
+        </div>
+        <p>The goal is to combine these two sides so that <strong>theta equals zero</strong>.</p>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- What is Theta? -->
+    <section id="theta" class="fade-in">
+        <h2>What is Theta?</h2>
+        <p>Theta is the daily cost of holding an option &mdash; think of it like rent you pay every day just to stay in the trade.</p>
+        <div class="grid-2">
+            <div class="card red">
+                <div class="card-title">When You BUY an Option</div>
+                <p>Theta works <strong>against you</strong>. Every day that passes, your option loses a little value even if the stock doesn&rsquo;t move. This is called &ldquo;time decay.&rdquo;</p>
+            </div>
+            <div class="card green">
+                <div class="card-title">When You SELL an Option</div>
+                <p>Theta works <strong>for you</strong>. You collect that daily rent from whoever bought the option.</p>
+            </div>
+        </div>
+        <div class="card yellow">
+            <div class="card-title">Zero Theta = Living Rent-Free</div>
+            <p>When the rent you&rsquo;re paying on one side equals the rent you&rsquo;re collecting on the other, you can hold the position as long as you need without time decay eating into your profits. You&rsquo;re waiting for your trade thesis to play out &mdash; on the house.</p>
+        </div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- Strike Selection -->
+    <section id="strikes" class="fade-in">
+        <h2>Strike Selection &mdash; Where to Place Your Bets</h2>
+        <p>Options come in three flavors based on where their &ldquo;strike price&rdquo; sits relative to the current stock price:</p>
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-title">At-the-Money (ATM)</div>
+                <p>The strike price is right at or very close to where the stock is trading now.</p>
+                <div class="example"><i>Stock is at $100, you buy the $100 call.</i></div>
+                <p>ATM options have the <strong>highest raw dollar theta</strong> because they&rsquo;re sitting at maximum uncertainty.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">In-the-Money (ITM)</div>
+                <p>The option already has real value built in.</p>
+                <div class="example"><i>Stock is at $100, you buy the $90 call. That call is worth at least $10 right now.</i></div>
+                <p>ITM options have the <strong>smallest theta relative to what you paid</strong>. They decay slower as a percentage.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Out-of-the-Money (OTM)</div>
+                <p>The option has no real value yet &mdash; purely a bet on future movement.</p>
+                <div class="example"><i>Stock is at $100, you buy the $110 call. Worthless unless stock climbs above $110.</i></div>
+                <p>OTM options have <strong>massive theta relative to their price</strong>. They decay fast percentage-wise.</p>
+            </div>
+        </div>
+        <h3>The Decay Hierarchy</h3>
+        <div class="hierarchy">
+            <strong>For Calls:</strong> ITM &gt; ATM &gt; OTM &nbsp;&nbsp;(ITM decays slowest, OTM decays fastest as %)<br>
+            <strong>For Puts:</strong> OTM &gt; ATM &gt; ITM &nbsp;&nbsp;(reversed because put values work opposite)
+        </div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- Expiration Selection -->
+    <section id="expirations" class="fade-in">
+        <h2>Expiration Selection &mdash; How Much Time to Buy</h2>
+        <p>Options have expiration dates &mdash; the day they either become valuable or expire worthless. How far out you go matters:</p>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Near-Term Expirations</div>
+                <p>Days to a few weeks out. Have the <strong>most theta</strong>. Time decay accelerates dramatically as expiration approaches &mdash; like a candle burning faster as it gets shorter.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Far-Term Expirations</div>
+                <p>Months out. Have the <strong>least theta</strong>. The decay is gentler because there&rsquo;s still plenty of time for things to happen.</p>
+            </div>
+        </div>
+        <div class="metaphor">Think of it like buying milk. Milk expiring tomorrow is practically worthless at the store. Milk expiring in two weeks still has most of its value. Options work the same way.</div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- Understanding Volatility -->
+    <section id="volatility" class="fade-in">
+        <h2>Understanding Volatility &mdash; The Two Types</h2>
+        <p>Volatility is how much a stock moves around. Capitol Gains tracks two kinds:</p>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Implied Volatility (IV)</div>
+                <p>What the options market <strong>expects</strong> to happen. High IV means options are expensive because traders are pricing in big moves. Low IV means options are cheap.</p>
+                <div class="metaphor">Think of IV as the <strong>weather forecast</strong>. It&rsquo;s what people think will happen.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Realized Volatility (RV)</div>
+                <p>What&rsquo;s <strong>actually</strong> happening. How much is the stock really moving day to day?</p>
+                <div class="metaphor">Think of RV as the <strong>actual weather</strong>. It&rsquo;s what&rsquo;s happening outside your window right now.</div>
+            </div>
+        </div>
+        <p>The relationship between these two drives trade selection.</p>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- The Decision Matrix -->
+    <section id="matrix" class="fade-in">
+        <h2>The Decision Matrix</h2>
+        <figure class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>High IV (expensive options)</th>
+                        <th>Low IV (cheap options)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>High RV</strong><br>(stock moving)</td>
+                        <td><strong>Buy Options</strong><br>Bearish Theta<br><i>Stock is moving, capture it</i></td>
+                        <td><strong>Buy Options</strong><br>Bearish Theta<br><i>Cheap + moving = ideal</i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Low RV</strong><br>(stock quiet)</td>
+                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta<br><i>Don&rsquo;t pay inflated rent</i></td>
+                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta<br><i>Structure for patience</i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </figure>
+        <div class="card highlight">
+            <div class="card-title">The Key Insight</div>
+            <p>When a stock is actually moving (high RV), own options to capture that movement. When options are expensive but the stock is quiet (high IV, low RV), use balanced spreads so you&rsquo;re not paying inflated daily rent while waiting.</p>
+        </div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <hr>
+
+    <!-- The Trade Types -->
+    <section id="trades" class="fade-in">
+        <h2>The Trade Types Explained</h2>
+
+        <div class="trade-card">
+            <h4>Long Calls (Bull Calls)</h4>
+            <div class="specs">
+                <span class="spec-tag">+C</span>
+                <span class="spec-tag">Best when: High RV, Low IV</span>
+            </div>
+            <p><strong>What it is:</strong> Simply buying a call option &mdash; a bet the stock will go up.</p>
+            <div class="metaphor">You&rsquo;re buying a lottery ticket, but one where the drawing happens every day and the stock&rsquo;s movement determines if you win. You want cheap tickets (low IV) on a game that&rsquo;s actually paying out frequently (high RV).</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 MSFT Jan 26 $420 Call for $8.50 (no more than $9.00)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Long Puts (Bear Puts)</h4>
+            <div class="specs">
+                <span class="spec-tag">+P</span>
+                <span class="spec-tag">Best when: High RV, Low IV</span>
+            </div>
+            <p><strong>What it is:</strong> Buying a put option &mdash; a bet the stock will go down.</p>
+            <div class="metaphor">Same as above, just betting on the other direction.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 TSLA Feb 21 $350 Put for $12.00 (no more than $12.50)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Long Call Spreads (Bull Call Spreads)</h4>
+            <div class="specs">
+                <span class="spec-tag">+C, -C</span>
+                <span class="spec-tag">Zero Theta</span>
+                <span class="spec-tag">Best when: Higher IV</span>
+            </div>
+            <p><strong>What it is:</strong> Buy an ITM call, sell an OTM call at a higher strike. Both same expiration.</p>
+            <p><strong>How it works:</strong> You&rsquo;re buying the right to profit if the stock goes up, but you&rsquo;re capping your upside by selling a call above. The short strike is your destination &mdash; that&rsquo;s where maximum profit occurs.</p>
+            <div class="metaphor">You&rsquo;re buying a ticket to a concert (the long call), but you&rsquo;re selling the backstage pass rights (the short call) to offset the cost. You get to enjoy the show up to a point, but you&rsquo;ve given up the chance for the ultimate VIP experience.</div>
+            <div class="example"><i>Stock at $100. Buy the $95 call, sell the $105 call. You profit as the stock rises toward $105, with max profit at $105 or above. Your cost is reduced because you sold that $105 call.</i></div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 AAPL Mar 21 $220 Call for $12.00</i><br><i>Sell-to-open 1 AAPL Mar 21 $235 Call for $5.50</i><br><i>Net debit: $6.50 (no more than $7.00)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Short Call Spreads (Bear Call Spreads)</h4>
+            <div class="specs">
+                <span class="spec-tag">-C, +C</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher IV, stock flat or down</span>
+            </div>
+            <p><strong>What it is:</strong> Sell an ITM call, buy an OTM call at a higher strike. The reverse of above.</p>
+            <p><strong>How it works:</strong> You&rsquo;re collecting premium by selling a call and buying a cheaper one above as protection. The short strike is your destination &mdash; you want the stock at or below that level at expiration.</p>
+            <div class="metaphor">You&rsquo;re the casino now. You&rsquo;re betting the stock won&rsquo;t go up much, collecting premium from someone who thinks it will. The long call is your insurance policy capping your losses if you&rsquo;re wrong.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 NVDA Feb 21 $140 Call for $8.00</i><br><i>Buy-to-open 1 NVDA Feb 21 $150 Call for $4.00</i><br><i>Net credit: $4.00 (no less than $3.75)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Long Put Spreads (Bear Put Spreads)</h4>
+            <div class="specs">
+                <span class="spec-tag">+P, -P</span>
+                <span class="spec-tag">Bearish Theta</span>
+                <span class="spec-tag">Best when: Higher IV, stock falling</span>
+            </div>
+            <p><strong>What it is:</strong> Buy an ITM put, sell an OTM put at a lower strike.</p>
+            <p><strong>How it works:</strong> You&rsquo;re betting on a decline but capping your profit at the short strike. The short strike is your destination.</p>
+            <div class="metaphor">You&rsquo;re buying home insurance (the long put) but agreeing that you&rsquo;ll only be covered down to a certain damage level (the short put). Cheaper than full coverage, but limited protection.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 META Mar 21 $580 Put for $18.00</i><br><i>Sell-to-open 1 META Mar 21 $560 Put for $11.00</i><br><i>Net debit: $7.00 (no more than $7.50)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Short Put Spreads (Bull Put Spreads)</h4>
+            <div class="specs">
+                <span class="spec-tag">-P, +P</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher IV, stock flat or rising</span>
+            </div>
+            <p><strong>What it is:</strong> Sell an ITM put, buy an OTM put at a lower strike.</p>
+            <p><strong>How it works:</strong> You&rsquo;re collecting premium betting the stock won&rsquo;t fall much. The long put below is your safety net.</p>
+            <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 GOOGL Feb 21 $190 Put for $6.50</i><br><i>Buy-to-open 1 GOOGL Feb 21 $180 Put for $3.00</i><br><i>Net credit: $3.50 (no less than $3.25)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Cash-Secured Puts</h4>
+            <div class="specs">
+                <span class="spec-tag">-P</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: High probability, Higher IV</span>
+            </div>
+            <p><strong>What it is:</strong> Selling an OTM put without any offsetting position &mdash; you&rsquo;re naked but you have the cash to buy shares if assigned.</p>
+            <p><strong>How it works:</strong> You sell a put below the current stock price, collecting premium. If the stock stays above your strike, you keep the premium. If it falls below, you&rsquo;re obligated to buy shares at that strike &mdash; but you wanted to own them anyway at that price.</p>
+            <div class="metaphor">You&rsquo;re getting paid to put in a limit order. Someone pays you to agree that you&rsquo;ll buy their stock if it drops to a certain price. If it never gets there, you just pocket the payment.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 AMD Jan 17 $120 Put for $3.20 (no less than $3.00)</i><br><i>(Secure with $12,000 cash in account)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Call Calendars</h4>
+            <div class="specs">
+                <span class="spec-tag">+C, -C (diff. expirations)</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+            </div>
+            <p><strong>What it is:</strong> Buy a longer-dated call, sell a shorter-dated call at the same strike.</p>
+            <p><strong>How it works:</strong> The near-term option you sold decays faster than the far-term option you bought. You&rsquo;re profiting from the difference in decay rates. The strike is your destination &mdash; you want the stock to land right there at the short option&rsquo;s expiration.</p>
+            <div class="metaphor">You&rsquo;re renting out a room in your house to cover your mortgage. The rent (short-term theta collection) pays for your cost of ownership (long-term theta payment). As long as the tenant stays (stock stays near the strike), you&rsquo;re in good shape.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 AMZN Mar 21 $230 Call for $9.50</i><br><i>Sell-to-open 1 AMZN Feb 21 $230 Call for $5.00</i><br><i>Net debit: $4.50 (no more than $5.00)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Put Calendars</h4>
+            <div class="specs">
+                <span class="spec-tag">+P, -P (diff. expirations)</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+            </div>
+            <p><strong>What it is:</strong> Buy a longer-dated put, sell a shorter-dated put at the same strike.</p>
+            <p><strong>How it works:</strong> Same concept as call calendars, just using puts. Often used when you have a bearish lean but want to structure it efficiently.</p>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 SPY Mar 21 $580 Put for $11.00</i><br><i>Sell-to-open 1 SPY Feb 21 $580 Put for $6.00</i><br><i>Net debit: $5.00 (no more than $5.50)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Call Diagonals</h4>
+            <div class="specs">
+                <span class="spec-tag">+C, -C (diff. exp. &amp; strikes)</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+            </div>
+            <p><strong>What it is:</strong> Buy a longer-dated ITM call, sell a shorter-dated OTM call.</p>
+            <p><strong>How it works:</strong> Combines the calendar concept (different expirations) with a spread concept (different strikes). You own a solid ITM call that decays slowly, and you&rsquo;re selling faster-decaying OTM calls against it over time.</p>
+            <div class="metaphor">You own a rental property (the long-dated ITM call) and you&rsquo;re running it as an Airbnb (selling short-term OTM calls repeatedly). The property has lasting value, and you generate income from short-term rentals.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 MSFT Apr 17 $400 Call for $28.00</i><br><i>Sell-to-open 1 MSFT Feb 21 $430 Call for $8.00</i><br><i>Net debit: $20.00 (no more than $21.00)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Put Diagonals</h4>
+            <div class="specs">
+                <span class="spec-tag">+P, -P (diff. exp. &amp; strikes)</span>
+                <span class="spec-tag">Bullish Theta</span>
+                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+            </div>
+            <p><strong>What it is:</strong> Buy a longer-dated OTM put, sell a shorter-dated ITM put.</p>
+            <p><strong>How it works:</strong> Same diagonal concept applied to puts.</p>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 QQQ Apr 17 $480 Put for $15.00</i><br><i>Sell-to-open 1 QQQ Feb 21 $500 Put for $8.50</i><br><i>Net debit: $6.50 (no more than $7.00)</i></div>
+        </div>
+
+        <div class="trade-card">
+            <h4>Long Strangles</h4>
+            <div class="specs">
+                <span class="spec-tag">+C, +P</span>
+                <span class="spec-tag">Bearish Theta</span>
+                <span class="spec-tag">Best when: Higher Realized Volatility expected</span>
+            </div>
+            <p><strong>What it is:</strong> Buy an OTM call AND buy an OTM put at the same expiration.</p>
+            <p><strong>How it works:</strong> You win if the stock moves significantly in either direction. You lose if it sits still because both options decay.</p>
+            <div class="metaphor">You&rsquo;re betting on a storm without knowing if it&rsquo;ll be a hurricane or a blizzard. You&rsquo;ve bought both an umbrella and a snow shovel. If the weather stays mild, you wasted money on both. If something big happens either way, one of them pays off big.</div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 NFLX Feb 21 $950 Call for $22.00</i><br><i>Buy-to-open 1 NFLX Feb 21 $850 Put for $18.00</i><br><i>Total debit: $40.00 (no more than $42.00)</i></div>
+        </div>
+
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <hr>
+
+    <!-- Interactive Visuals -->
+    <section id="visuals" class="fade-in">
+        <h2>Interactive Visuals</h2>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showVisual('theta')">Time Decay</button>
+            <button class="nav-tab" onclick="showVisual('strikes')">Strike Selection</button>
+            <button class="nav-tab" onclick="showVisual('balance')">Zero Theta</button>
+            <button class="nav-tab" onclick="showVisual('payoffs')">Trade Payoffs</button>
+        </div>
+
+        <!-- Time Decay -->
+        <div class="visual-section active" id="visual-theta">
+            <h3>Time Decay: The Burning Candle</h3>
+            <div class="visual-container">
+                <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Grid -->
+                    <line x1="70" y1="60" x2="530" y2="60" class="chart-grid"/>
+                    <line x1="70" y1="110" x2="530" y2="110" class="chart-grid"/>
+                    <line x1="70" y1="160" x2="530" y2="160" class="chart-grid"/>
+                    <line x1="70" y1="210" x2="530" y2="210" class="chart-grid"/>
+                    <!-- Axes -->
+                    <line x1="70" y1="30" x2="70" y2="245" class="chart-axis"/>
+                    <line x1="70" y1="240" x2="530" y2="240" class="chart-axis"/>
+                    <!-- Axis labels -->
+                    <text x="15" y="145" class="chart-label" transform="rotate(-90,15,145)" text-anchor="middle">Option Value</text>
+                    <text x="300" y="272" class="chart-label" text-anchor="middle">Days Until Expiration</text>
+                    <text x="70" y="256" class="chart-annotation" text-anchor="middle">90</text>
+                    <text x="223" y="256" class="chart-annotation" text-anchor="middle">60</text>
+                    <text x="377" y="256" class="chart-annotation" text-anchor="middle">30</text>
+                    <text x="530" y="256" class="chart-annotation" text-anchor="middle">0</text>
+                    <!-- Gradient fill -->
+                    <defs>
+                        <linearGradient id="decayGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#34d399"/>
+                            <stop offset="100%" stop-color="#f87171"/>
+                        </linearGradient>
+                    </defs>
+                    <polygon points="70,35 121,42 172,55 223,69 274,84 326,100 377,119 428,141 479,170 504,191 530,240 530,240 70,240" fill="url(#decayGrad)" class="chart-area"/>
+                    <!-- Curve -->
+                    <polyline points="70,35 121,42 172,55 223,69 274,84 326,100 377,119 428,141 479,170 504,191 530,240" class="chart-line" stroke="url(#decayGrad)"/>
+                    <!-- Annotations -->
+                    <line x1="377" y1="119" x2="377" y2="240" stroke="rgba(251,191,36,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+                    <text x="385" y="180" fill="#fbbf24" font-size="10" font-family="Outfit">Decay accelerates</text>
+                    <circle cx="70" cy="35" class="chart-dot" fill="#34d399"/>
+                    <circle cx="377" cy="119" class="chart-dot" fill="#fbbf24"/>
+                    <circle cx="530" cy="240" class="chart-dot" fill="#f87171"/>
+                </svg>
+            </div>
+            <div class="grid-3">
+                <div class="card"><div class="card-title">60+ Days Out</div><p>Slow decay, plenty of time</p></div>
+                <div class="card"><div class="card-title">30&ndash;60 Days</div><p>Moderate decay picking up</p></div>
+                <div class="card"><div class="card-title">Under 30 Days</div><p>Rapid decay, time is critical</p></div>
+            </div>
+        </div>
+
+        <!-- Strike Selection -->
+        <div class="visual-section" id="visual-strikes">
+            <h3>Strike Selection: ITM, ATM, OTM</h3>
+            <div class="visual-container">
+                <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Zones -->
+                    <rect x="60" y="50" width="170" height="60" rx="6" fill="rgba(52,211,153,0.12)" stroke="rgba(52,211,153,0.3)" stroke-width="1"/>
+                    <rect x="230" y="50" width="100" height="60" rx="6" fill="rgba(96,165,250,0.12)" stroke="rgba(96,165,250,0.3)" stroke-width="1"/>
+                    <rect x="330" y="50" width="170" height="60" rx="6" fill="rgba(248,113,113,0.12)" stroke="rgba(248,113,113,0.3)" stroke-width="1"/>
+                    <!-- Zone labels -->
+                    <text x="145" y="76" class="chart-title" text-anchor="middle" fill="#34d399" font-size="12">IN THE MONEY</text>
+                    <text x="145" y="93" class="chart-annotation" text-anchor="middle">(ITM)</text>
+                    <text x="280" y="76" class="chart-title" text-anchor="middle" fill="#60a5fa" font-size="12">AT THE MONEY</text>
+                    <text x="280" y="93" class="chart-annotation" text-anchor="middle">(ATM)</text>
+                    <text x="415" y="76" class="chart-title" text-anchor="middle" fill="#f87171" font-size="12">OUT OF THE MONEY</text>
+                    <text x="415" y="93" class="chart-annotation" text-anchor="middle">(OTM)</text>
+                    <!-- Price line -->
+                    <line x1="60" y1="130" x2="500" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+                    <!-- Price ticks -->
+                    <line x1="80" y1="125" x2="80" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="80" y="148" class="chart-annotation" text-anchor="middle">$80</text>
+                    <line x1="145" y1="125" x2="145" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="145" y="148" class="chart-annotation" text-anchor="middle">$90</text>
+                    <line x1="242" y1="125" x2="242" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="242" y="148" class="chart-annotation" text-anchor="middle">$95</text>
+                    <line x1="318" y1="125" x2="318" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="318" y="148" class="chart-annotation" text-anchor="middle">$105</text>
+                    <line x1="415" y1="125" x2="415" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="415" y="148" class="chart-annotation" text-anchor="middle">$110</text>
+                    <line x1="480" y1="125" x2="480" y2="135" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="480" y="148" class="chart-annotation" text-anchor="middle">$120</text>
+                    <!-- Current price marker -->
+                    <line x1="280" y1="45" x2="280" y2="140" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,3"/>
+                    <text x="280" y="168" fill="#fbbf24" font-family="Outfit" font-size="12" font-weight="600" text-anchor="middle">Stock: $100</text>
+                    <text x="280" y="185" class="chart-annotation" text-anchor="middle">(For Call Options)</text>
+                </svg>
+            </div>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title">ITM</div>
+                    <div class="notation">Lowest % decay</div>
+                    <p>Has real value built in. Slower decay relative to cost.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">ATM</div>
+                    <div class="notation">Highest $ decay</div>
+                    <p>Maximum uncertainty = maximum time premium.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">OTM</div>
+                    <div class="notation">Highest % decay</div>
+                    <p>All time value, no intrinsic. Decays fastest as %.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zero Theta Balance -->
+        <div class="visual-section" id="visual-balance">
+            <h3>Zero Theta: The Balanced Scale</h3>
+            <div class="visual-container">
+                <svg viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Fulcrum -->
+                    <polygon points="280,180 260,220 300,220" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                    <!-- Beam -->
+                    <line x1="80" y1="170" x2="480" y2="170" stroke="rgba(255,255,255,0.3)" stroke-width="3" stroke-linecap="round"/>
+                    <!-- Left pan (Theta 1) -->
+                    <rect x="70" y="85" width="170" height="75" rx="8" fill="rgba(52,211,153,0.10)" stroke="rgba(52,211,153,0.35)" stroke-width="1.5"/>
+                    <text x="155" y="112" class="chart-title" text-anchor="middle" fill="#34d399" font-size="13">THETA 1</text>
+                    <text x="155" y="130" class="chart-annotation" text-anchor="middle" font-size="10">High Conviction Side</text>
+                    <text x="155" y="148" fill="#34d399" font-family="Outfit" font-size="11" text-anchor="middle">+ Positive Theta</text>
+                    <line x1="155" y1="160" x2="155" y2="170" stroke="rgba(52,211,153,0.4)" stroke-width="2"/>
+                    <!-- Right pan (Theta 2) -->
+                    <rect x="320" y="85" width="170" height="75" rx="8" fill="rgba(248,113,113,0.10)" stroke="rgba(248,113,113,0.35)" stroke-width="1.5"/>
+                    <text x="405" y="112" class="chart-title" text-anchor="middle" fill="#f87171" font-size="13">THETA 2</text>
+                    <text x="405" y="130" class="chart-annotation" text-anchor="middle" font-size="10">Upside Potential</text>
+                    <text x="405" y="148" fill="#f87171" font-family="Outfit" font-size="11" text-anchor="middle">- Negative Theta</text>
+                    <line x1="405" y1="160" x2="405" y2="170" stroke="rgba(248,113,113,0.4)" stroke-width="2"/>
+                    <!-- Center label -->
+                    <rect x="235" y="25" width="90" height="32" rx="16" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.4)" stroke-width="1"/>
+                    <text x="280" y="46" fill="#fbbf24" font-family="Outfit" font-size="13" font-weight="700" text-anchor="middle">= 0 NET</text>
+                </svg>
+            </div>
+            <div class="grid-2">
+                <div class="card red">
+                    <div class="card-title">When You BUY Options</div>
+                    <p>Theta works <strong>against you</strong>. Every day, your option loses value just from time passing. It&rsquo;s like paying rent to stay in the trade.</p>
+                </div>
+                <div class="card green">
+                    <div class="card-title">When You SELL Options</div>
+                    <p>Theta works <strong>for you</strong>. Every day, you collect value as the option decays. It&rsquo;s like being the landlord collecting rent.</p>
+                </div>
+            </div>
+            <div class="card yellow">
+                <div class="card-title">The Capitol Gains Edge</div>
+                <p>By combining buys and sells that cancel each other&rsquo;s theta, you can <strong>hold as long as you need</strong> without time decay eating into your position. You&rsquo;re living rent-free while waiting for your thesis to play out.</p>
+            </div>
+        </div>
+
+        <!-- Trade Payoffs -->
+        <div class="visual-section" id="visual-payoffs">
+            <h3>Trade Payoff Diagrams</h3>
+            <div class="nav-tabs" id="payoff-tabs">
+                <button class="nav-tab active" id="btn-longCall" onclick="showPayoff('longCall')">Long Call</button>
+                <button class="nav-tab" id="btn-longPut" onclick="showPayoff('longPut')">Long Put</button>
+                <button class="nav-tab" id="btn-bullSpread" onclick="showPayoff('bullSpread')">Bull Spread</button>
+                <button class="nav-tab" id="btn-bearSpread" onclick="showPayoff('bearSpread')">Bear Spread</button>
+                <button class="nav-tab" id="btn-strangle" onclick="showPayoff('strangle')">Strangle</button>
+            </div>
+
+            <!-- Long Call -->
+            <div class="payoff-diagram active" id="payoff-longCall">
+                <div class="visual-container">
+                    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="60" y1="50" x2="460" y2="50" class="chart-grid"/>
+                        <line x1="60" y1="90" x2="460" y2="90" class="chart-grid"/>
+                        <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
+                        <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
+                        <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
+                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
+                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
+                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
+                        <polyline points="60,165 260,165 460,55" class="chart-line" stroke="#34d399"/>
+                        <polygon points="60,165 260,165 460,55 460,130 260,130 60,130" fill="#34d399" class="chart-area"/>
+                        <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="260" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Strike</text>
+                    </svg>
+                </div>
+                <div class="card">
+                    <div><span style="color:#34d399;"><strong>Long Call</strong></span> &nbsp;+C</div>
+                    <p>Simple bet the stock goes up. Unlimited upside, loss limited to premium paid.</p>
+                </div>
+            </div>
+
+            <!-- Long Put -->
+            <div class="payoff-diagram" id="payoff-longPut">
+                <div class="visual-container">
+                    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="60" y1="50" x2="460" y2="50" class="chart-grid"/>
+                        <line x1="60" y1="90" x2="460" y2="90" class="chart-grid"/>
+                        <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
+                        <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
+                        <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
+                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
+                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
+                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
+                        <polyline points="60,55 260,165 460,165" class="chart-line" stroke="#f87171"/>
+                        <polygon points="60,55 260,165 260,130 60,130" fill="#f87171" class="chart-area"/>
+                        <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="260" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Strike</text>
+                    </svg>
+                </div>
+                <div class="card">
+                    <div><span style="color:#f87171;"><strong>Long Put</strong></span> &nbsp;+P</div>
+                    <p>Simple bet the stock goes down. Profits as stock falls, loss limited to premium paid.</p>
+                </div>
+            </div>
+
+            <!-- Bull Spread -->
+            <div class="payoff-diagram" id="payoff-bullSpread">
+                <div class="visual-container">
+                    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="60" y1="50" x2="460" y2="50" class="chart-grid"/>
+                        <line x1="60" y1="90" x2="460" y2="90" class="chart-grid"/>
+                        <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
+                        <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
+                        <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
+                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
+                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
+                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
+                        <polyline points="60,165 210,165 360,90 460,90" class="chart-line" stroke="#60a5fa"/>
+                        <polygon points="210,165 360,90 360,130 210,130" fill="#60a5fa" class="chart-area"/>
+                        <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <line x1="360" y1="130" x2="360" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="210" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Long</text>
+                        <text x="360" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Short</text>
+                    </svg>
+                </div>
+                <div class="card">
+                    <div><span style="color:#60a5fa;"><strong>Bull Call Spread</strong></span> &nbsp;+C, -C</div>
+                    <p>Capped upside, reduced cost. Max profit at short strike, limited loss.</p>
+                </div>
+            </div>
+
+            <!-- Bear Spread -->
+            <div class="payoff-diagram" id="payoff-bearSpread">
+                <div class="visual-container">
+                    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="60" y1="50" x2="460" y2="50" class="chart-grid"/>
+                        <line x1="60" y1="90" x2="460" y2="90" class="chart-grid"/>
+                        <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
+                        <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
+                        <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
+                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
+                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
+                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
+                        <polyline points="60,90 210,90 360,165 460,165" class="chart-line" stroke="#a78bfa"/>
+                        <polygon points="60,90 210,90 210,130 60,130" fill="#a78bfa" class="chart-area"/>
+                        <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <line x1="360" y1="130" x2="360" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="210" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Long</text>
+                        <text x="360" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Short</text>
+                    </svg>
+                </div>
+                <div class="card">
+                    <div><span style="color:#a78bfa;"><strong>Bear Put Spread</strong></span> &nbsp;+P, -P</div>
+                    <p>Capped downside bet, reduced cost. Max profit at short strike, limited loss.</p>
+                </div>
+            </div>
+
+            <!-- Strangle -->
+            <div class="payoff-diagram" id="payoff-strangle">
+                <div class="visual-container">
+                    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="60" y1="50" x2="460" y2="50" class="chart-grid"/>
+                        <line x1="60" y1="90" x2="460" y2="90" class="chart-grid"/>
+                        <line x1="60" y1="170" x2="460" y2="170" class="chart-grid"/>
+                        <line x1="60" y1="30" x2="60" y2="220" class="chart-axis"/>
+                        <line x1="60" y1="130" x2="460" y2="130" class="chart-zero"/>
+                        <text x="40" y="55" class="chart-annotation" text-anchor="end">PROFIT</text>
+                        <text x="40" y="175" class="chart-annotation" text-anchor="end">LOSS</text>
+                        <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
+                        <text x="110" y="225" class="chart-annotation" text-anchor="middle">$80</text>
+                        <text x="210" y="225" class="chart-annotation" text-anchor="middle">$90</text>
+                        <text x="260" y="225" class="chart-annotation" text-anchor="middle">$100</text>
+                        <text x="360" y="225" class="chart-annotation" text-anchor="middle">$110</text>
+                        <text x="410" y="225" class="chart-annotation" text-anchor="middle">$120</text>
+                        <polyline points="60,70 180,170 340,170 460,70" class="chart-line" stroke="#fb923c"/>
+                        <polygon points="60,70 180,170 180,130 60,130" fill="#fb923c" class="chart-area"/>
+                        <polygon points="340,170 460,70 460,130 340,130" fill="#fb923c" class="chart-area"/>
+                        <line x1="180" y1="130" x2="180" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <line x1="340" y1="130" x2="340" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
+                        <text x="180" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Put</text>
+                        <text x="340" y="125" class="chart-annotation" text-anchor="middle" fill="#fbbf24">Call</text>
+                    </svg>
+                </div>
+                <div class="card">
+                    <div><span style="color:#fb923c;"><strong>Long Strangle</strong></span> &nbsp;+C, +P</div>
+                    <p>Bet on big move in either direction. Profits from large moves up or down, loses if stock stays flat.</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <hr>
+
+    <!-- Putting It All Together -->
+    <section class="fade-in">
+        <h2>Putting It All Together</h2>
+        <p>The Capitol Gains approach is about matching the right structure to the right environment:</p>
+        <div class="card"><p><strong>Stock actually moving + cheap options</strong> &rarr; Buy outright calls or puts, let movement do the work</p></div>
+        <div class="card"><p><strong>Expensive options + stock not moving</strong> &rarr; Use zero-theta spreads, don&rsquo;t pay inflated rent</p></div>
+        <div class="card"><p><strong>Expecting stock to land at a specific price</strong> &rarr; Calendars and diagonals, collect theta while you wait</p></div>
+        <div class="card"><p><strong>Uncertain direction but certain something big is coming</strong> &rarr; Strangles, pay for the optionality</p></div>
+        <div class="card yellow">
+            <div class="card-title">The Bottom Line</div>
+            <p>The zero-theta design means the team isn&rsquo;t fighting time decay while waiting for their thesis to play out. They&rsquo;re structured to wait as long as needed &mdash; which is a significant edge when you have high conviction about where a stock is headed but can&rsquo;t predict exactly when it&rsquo;ll get there.</p>
+        </div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <div class="footer">Capitol Gains Trade Types Guide</div>
+
+</div>
+
+<script>
+    // Visual section tabs
+    function showVisual(id) {
+        document.querySelectorAll('.visual-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tabs:first-of-type .nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('visual-' + id).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // Payoff diagram tabs
+    function showPayoff(id) {
+        document.querySelectorAll('.payoff-diagram').forEach(d => d.classList.remove('active'));
+        document.querySelectorAll('#payoff-tabs .nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('payoff-' + id).classList.add('active');
+        document.getElementById('btn-' + id).classList.add('active');
+    }
+
+    // Scroll fade-in
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
