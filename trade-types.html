@@ -612,11 +612,11 @@
     <section id="visuals" class="fade-in">
         <h2>Interactive Visuals</h2>
 
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showVisual('theta')">Time Decay</button>
-            <button class="nav-tab" onclick="showVisual('strikes')">Strike Selection</button>
-            <button class="nav-tab" onclick="showVisual('balance')">Zero Theta</button>
-            <button class="nav-tab" onclick="showVisual('payoffs')">Trade Payoffs</button>
+        <div class="nav-tabs" id="visual-tabs">
+            <button class="nav-tab active" onclick="showVisual('theta', this)">Time Decay</button>
+            <button class="nav-tab" onclick="showVisual('strikes', this)">Strike Selection</button>
+            <button class="nav-tab" onclick="showVisual('balance', this)">Zero Theta</button>
+            <button class="nav-tab" onclick="showVisual('payoffs', this)">Trade Payoffs</button>
         </div>
 
         <!-- Time Decay -->
@@ -952,11 +952,11 @@
 
 <script>
     // Visual section tabs
-    function showVisual(id) {
+    function showVisual(id, btn) {
         document.querySelectorAll('.visual-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-tabs:first-of-type .nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('#visual-tabs .nav-tab').forEach(t => t.classList.remove('active'));
         document.getElementById('visual-' + id).classList.add('active');
-        event.target.classList.add('active');
+        btn.classList.add('active');
     }
 
     // Payoff diagram tabs
