@@ -293,6 +293,22 @@
     <h1>Capitol Gains Trade Types</h1>
     <p class="subtitle">A Complete Guide to Options Strategies</p>
 
+    <!-- Table of Contents -->
+    <nav class="toc fade-in">
+        <h3>Contents</h3>
+        <ul>
+            <li><a href="#edge">The Capitol Gains Edge</a></li>
+            <li><a href="#philosophy">How We Structure Every Trade</a></li>
+            <li><a href="#key">Reading the Trade Alerts</a></li>
+            <li><a href="#strikes">Strike Selection</a></li>
+            <li><a href="#expirations">Expiration Selection</a></li>
+            <li><a href="#volatility">Understanding Volatility</a></li>
+            <li><a href="#matrix">The Decision Matrix</a></li>
+            <li><a href="#trades">The Trade Types</a></li>
+            <li><a href="#visuals">Interactive Visuals</a></li>
+        </ul>
+    </nav>
+
     <!-- The Capitol Gains Edge (opening) -->
     <section id="edge" class="fade-in">
         <h2>The Capitol Gains Edge</h2>
@@ -320,23 +336,7 @@
         <p>To follow all Capitol Gains trades, you&rsquo;ll need <strong>Level 3 options approval</strong> (sometimes called &ldquo;Spreads&rdquo; or &ldquo;Multi-leg&rdquo;) from your broker. This lets you trade spreads, calendars, and diagonals. If you only have Level 2, you can still trade simple calls and puts. Every broker names their levels a little differently, so call yours and ask for spread trading access if you don&rsquo;t have it yet.</p>
     </div>
 
-    <!-- Table of Contents -->
-    <nav class="toc fade-in">
-        <h3>Contents</h3>
-        <ul>
-            <li><a href="#edge">The Capitol Gains Edge</a></li>
-            <li><a href="#philosophy">How We Structure Every Trade</a></li>
-            <li><a href="#key">Reading the Trade Alerts</a></li>
-            <li><a href="#strikes">Strike Selection</a></li>
-            <li><a href="#expirations">Expiration Selection</a></li>
-            <li><a href="#volatility">Understanding Volatility</a></li>
-            <li><a href="#matrix">The Decision Matrix</a></li>
-            <li><a href="#trades">The Trade Types</a></li>
-            <li><a href="#visuals">Interactive Visuals</a></li>
-        </ul>
-    </nav>
-
-    <!-- How I Structure Every Trade -->
+    <!-- How We Structure Every Trade -->
     <section id="philosophy" class="fade-in">
         <h2>How We Structure Every Trade</h2>
         <p>Every Capitol Gains trade is built with two parts (called &ldquo;legs&rdquo; in options lingo) that balance each other:</p>
@@ -357,20 +357,19 @@
     <!-- Reading the Trade Alerts (Quick Key) -->
     <section id="key" class="fade-in">
         <h2>Reading the Trade Alerts</h2>
-        <p>When you see a Capitol Gains trade alert, it uses shorthand. Here&rsquo;s what everything means:</p>
+        <p>When you see a Capitol Gains trade alert, here&rsquo;s what everything means:</p>
 
-        <h3>Trade Shorthand</h3>
+        <h3>Order Types</h3>
         <div class="grid-2">
-            <div class="card"><div class="card-title">+C</div><p>Buy a Call (you pay to open the trade)</p></div>
-            <div class="card"><div class="card-title">-C</div><p>Sell a Call (you collect money to open the trade)</p></div>
-            <div class="card"><div class="card-title">+P</div><p>Buy a Put (you pay to open the trade)</p></div>
-            <div class="card"><div class="card-title">-P</div><p>Sell a Put (you collect money to open the trade)</p></div>
+            <div class="card"><div class="card-title">Buy-to-Open (BTO)</div><p>Pay to buy a call or put. This starts a new position where you own the option.</p></div>
+            <div class="card"><div class="card-title">Sell-to-Open (STO)</div><p>Create a new call or put to sell for income. This starts a new position where you owe the obligation.</p></div>
+            <div class="card"><div class="card-title">Sell-to-Close (STC)</div><p>Sell your previously purchased position. This closes out an option you bought earlier.</p></div>
+            <div class="card"><div class="card-title">Buy-to-Close (BTC)</div><p>Buy back a call or put you created and sold. This closes out an option you sold earlier.</p></div>
         </div>
 
         <h3>Key Terms</h3>
         <div class="card"><div class="card-title">Premium</div><p>The price of an option. It&rsquo;s what you pay to buy one, or what you collect when you sell one. Think of it like a ticket price.</p></div>
         <div class="card"><div class="card-title">Debit vs. Credit</div><p><strong>Debit</strong> = a trade where you pay money up front (you spend now, hoping to make more later). <strong>Credit</strong> = a trade where you collect money up front (you get paid now, hoping the trade stays in your favor).</p></div>
-        <div class="card"><div class="card-title">Buy-to-Open (BTO) &amp; Sell-to-Open (STO)</div><p><strong>Buy-to-open</strong> means you&rsquo;re starting a new trade by buying an option. <strong>Sell-to-open</strong> means you&rsquo;re starting a new trade by selling an option. These are the &ldquo;opening&rdquo; orders you&rsquo;ll place with your broker.</p></div>
 
         <h3>Theta Labels on Trades</h3>
         <p>Each trade type has a theta label that tells you how time decay affects it:</p>
@@ -494,7 +493,7 @@
         <div class="trade-card">
             <h4>Long Calls (Bull Calls)</h4>
             <div class="specs">
-                <span class="spec-tag">+C (buy a call)</span>
+                <span class="spec-tag">BTO Call</span>
                 <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: High RV, Low IV</span>
                 <span class="spec-tag">Approval: Level 2</span>
@@ -507,7 +506,7 @@
         <div class="trade-card">
             <h4>Long Puts (Bear Puts)</h4>
             <div class="specs">
-                <span class="spec-tag">+P (buy a put)</span>
+                <span class="spec-tag">BTO Put</span>
                 <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: High RV, Low IV</span>
                 <span class="spec-tag">Approval: Level 2</span>
@@ -520,7 +519,7 @@
         <div class="trade-card">
             <h4>Long Call Spreads (Bull Call Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">+C, -C (buy a call, sell a call)</span>
+                <span class="spec-tag">BTO Call, STO Call</span>
                 <span class="spec-tag">Zero Theta</span>
                 <span class="spec-tag">Best when: Higher IV</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -535,7 +534,7 @@
         <div class="trade-card">
             <h4>Short Call Spreads (Bear Call Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">-C, +C (sell a call, buy a call)</span>
+                <span class="spec-tag">STO Call, BTO Call</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock flat or down</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -549,7 +548,7 @@
         <div class="trade-card">
             <h4>Long Put Spreads (Bear Put Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">+P, -P (buy a put, sell a put)</span>
+                <span class="spec-tag">BTO Put, STO Put</span>
                 <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock falling</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -563,7 +562,7 @@
         <div class="trade-card">
             <h4>Short Put Spreads (Bull Put Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">-P, +P (sell a put, buy a put)</span>
+                <span class="spec-tag">STO Put, BTO Put</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock flat or rising</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -577,7 +576,7 @@
         <div class="trade-card">
             <h4>Cash-Secured Puts</h4>
             <div class="specs">
-                <span class="spec-tag">-P (sell a put)</span>
+                <span class="spec-tag">STO Put</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: High probability, Higher IV</span>
                 <span class="spec-tag">Approval: Level 2</span>
@@ -591,7 +590,7 @@
         <div class="trade-card">
             <h4>Call Calendars</h4>
             <div class="specs">
-                <span class="spec-tag">+C, -C (diff. expirations)</span>
+                <span class="spec-tag">BTO Call, STO Call (diff. expirations)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -605,7 +604,7 @@
         <div class="trade-card">
             <h4>Put Calendars</h4>
             <div class="specs">
-                <span class="spec-tag">+P, -P (diff. expirations)</span>
+                <span class="spec-tag">BTO Put, STO Put (diff. expirations)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -619,7 +618,7 @@
         <div class="trade-card">
             <h4>Call Diagonals</h4>
             <div class="specs">
-                <span class="spec-tag">+C, -C (diff. exp. &amp; strikes)</span>
+                <span class="spec-tag">BTO Call, STO Call (diff. exp. &amp; strikes)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -633,7 +632,7 @@
         <div class="trade-card">
             <h4>Put Diagonals</h4>
             <div class="specs">
-                <span class="spec-tag">+P, -P (diff. exp. &amp; strikes)</span>
+                <span class="spec-tag">BTO Put, STO Put (diff. exp. &amp; strikes)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
                 <span class="spec-tag">Approval: Level 3</span>
@@ -647,7 +646,7 @@
         <div class="trade-card">
             <h4>Long Strangles</h4>
             <div class="specs">
-                <span class="spec-tag">+C, +P (buy a call and a put)</span>
+                <span class="spec-tag">BTO Call, BTO Put</span>
                 <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: Expecting a big move in either direction</span>
                 <span class="spec-tag">Approval: Level 2</span>
@@ -869,7 +868,7 @@
                     </svg>
                 </div>
                 <div class="card">
-                    <div><span style="color:#34d399;"><strong>Long Call</strong></span> &nbsp;+C</div>
+                    <div><span style="color:#34d399;"><strong>Long Call</strong></span> &nbsp;BTO Call</div>
                     <p><strong>You make money</strong> when the stock rises above your breakeven (strike + premium paid).</p>
                     <p><strong>You lose money</strong> when the stock stays flat or drops. The most you can lose is the premium you paid. There&rsquo;s no limit to how much you can make. The higher the stock goes, the more you profit.</p>
                 </div>
@@ -911,7 +910,7 @@
                     </svg>
                 </div>
                 <div class="card">
-                    <div><span style="color:#f87171;"><strong>Long Put</strong></span> &nbsp;+P</div>
+                    <div><span style="color:#f87171;"><strong>Long Put</strong></span> &nbsp;BTO Put</div>
                     <p><strong>You make money</strong> when the stock falls below your breakeven (strike &minus; premium paid).</p>
                     <p><strong>You lose money</strong> when the stock stays flat or rises. The most you can lose is the premium you paid. The further the stock drops, the more you profit.</p>
                 </div>
@@ -951,7 +950,7 @@
                     </svg>
                 </div>
                 <div class="card">
-                    <div><span style="color:#60a5fa;"><strong>Bull Call Spread</strong></span> &nbsp;+C, -C</div>
+                    <div><span style="color:#60a5fa;"><strong>Bull Call Spread</strong></span> &nbsp;BTO Call, STO Call</div>
                     <p><strong>You make money</strong> when the stock rises above the breakeven. Max profit hits when the stock reaches the short strike or higher.</p>
                     <p><strong>You lose money</strong> when the stock stays below the breakeven. The most you can lose is the debit (the amount you paid to enter). Your profit is capped at the difference between the two strikes minus the debit.</p>
                 </div>
@@ -991,7 +990,7 @@
                     </svg>
                 </div>
                 <div class="card">
-                    <div><span style="color:#a78bfa;"><strong>Bear Put Spread</strong></span> &nbsp;+P, -P</div>
+                    <div><span style="color:#a78bfa;"><strong>Bear Put Spread</strong></span> &nbsp;BTO Put, STO Put</div>
                     <p><strong>You make money</strong> when the stock falls below the breakeven. Max profit hits when the stock reaches the short strike or lower.</p>
                     <p><strong>You lose money</strong> when the stock stays above the breakeven. The most you can lose is the debit. Your profit is capped at the difference between the two strikes minus the debit.</p>
                 </div>
@@ -1035,7 +1034,7 @@
                     </svg>
                 </div>
                 <div class="card">
-                    <div><span style="color:#fb923c;"><strong>Long Strangle</strong></span> &nbsp;+C, +P</div>
+                    <div><span style="color:#fb923c;"><strong>Long Strangle</strong></span> &nbsp;BTO Call, BTO Put</div>
                     <p><strong>You make money</strong> when the stock makes a big move in <i>either</i> direction, past either breakeven point.</p>
                     <p><strong>You lose money</strong> when the stock stays between the two strikes. The most you can lose is the total premium paid for both options. There&rsquo;s no limit to how much you can make if the stock moves far enough.</p>
                 </div>
