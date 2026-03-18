@@ -249,12 +249,12 @@
         .chart-grid { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
         .chart-axis { stroke: rgba(255,255,255,0.15); stroke-width: 1.5; }
         .chart-zero { stroke: rgba(255,255,255,0.12); stroke-width: 1; stroke-dasharray: 6,4; }
-        .chart-label { fill: var(--text-secondary); font-family: 'Outfit', sans-serif; font-size: 14px; }
-        .chart-title { fill: var(--text-heading); font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600; }
+        .chart-label { fill: var(--text-secondary); font-family: 'Outfit', sans-serif; font-size: 12px; }
+        .chart-title { fill: var(--text-heading); font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; }
         .chart-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .chart-area { opacity: 0.10; }
         .chart-dot { r: 4; }
-        .chart-annotation { fill: var(--text-secondary); font-family: 'Karla', sans-serif; font-size: 13px; }
+        .chart-annotation { fill: var(--text-secondary); font-family: 'Karla', sans-serif; font-size: 11px; }
 
         /* ── Footer ── */
         .footer {
@@ -708,7 +708,7 @@
                     <polyline points="70,35 121,42 172,55 223,69 274,84 326,100 377,119 428,141 479,170 504,191 530,240" class="chart-line" stroke="url(#decayGrad)"/>
                     <!-- Annotations -->
                     <line x1="377" y1="119" x2="377" y2="240" stroke="rgba(251,191,36,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-                    <text x="385" y="180" fill="#fbbf24" font-size="15" font-family="Outfit">Decay accelerates</text>
+                    <text x="385" y="180" fill="#fbbf24" font-size="10" font-family="Outfit">Decay accelerates</text>
                     <circle cx="70" cy="35" class="chart-dot" fill="#34d399"/>
                     <circle cx="377" cy="119" class="chart-dot" fill="#fbbf24"/>
                     <circle cx="530" cy="240" class="chart-dot" fill="#f87171"/>
@@ -731,11 +731,11 @@
                     <rect x="230" y="50" width="100" height="60" rx="6" fill="rgba(96,165,250,0.12)" stroke="rgba(96,165,250,0.3)" stroke-width="1"/>
                     <rect x="330" y="50" width="170" height="60" rx="6" fill="rgba(248,113,113,0.12)" stroke="rgba(248,113,113,0.3)" stroke-width="1"/>
                     <!-- Zone labels -->
-                    <text x="145" y="76" class="chart-title" text-anchor="middle" fill="#34d399" font-size="15">IN THE MONEY</text>
+                    <text x="145" y="76" class="chart-title" text-anchor="middle" fill="#34d399" font-size="10">IN THE MONEY</text>
                     <text x="145" y="93" class="chart-annotation" text-anchor="middle">(ITM)</text>
-                    <text x="280" y="76" class="chart-title" text-anchor="middle" fill="#60a5fa" font-size="15">AT THE MONEY</text>
+                    <text x="280" y="76" class="chart-title" text-anchor="middle" fill="#60a5fa" font-size="10">AT THE MONEY</text>
                     <text x="280" y="93" class="chart-annotation" text-anchor="middle">(ATM)</text>
-                    <text x="415" y="76" class="chart-title" text-anchor="middle" fill="#f87171" font-size="15">OUT OF THE MONEY</text>
+                    <text x="415" y="76" class="chart-title" text-anchor="middle" fill="#f87171" font-size="10">OUT OF THE MONEY</text>
                     <text x="415" y="93" class="chart-annotation" text-anchor="middle">(OTM)</text>
                     <!-- Price line -->
                     <line x1="60" y1="130" x2="500" y2="130" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
@@ -754,7 +754,7 @@
                     <text x="480" y="148" class="chart-annotation" text-anchor="middle">$120</text>
                     <!-- Current price marker -->
                     <line x1="280" y1="45" x2="280" y2="140" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,3"/>
-                    <text x="280" y="168" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">Stock: $100</text>
+                    <text x="280" y="168" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">Stock: $100</text>
                     <text x="280" y="185" class="chart-annotation" text-anchor="middle">(For Call Options)</text>
                 </svg>
             </div>
@@ -788,19 +788,19 @@
                     <line x1="80" y1="170" x2="480" y2="170" stroke="rgba(255,255,255,0.3)" stroke-width="3" stroke-linecap="round"/>
                     <!-- Left pan (Theta 1) -->
                     <rect x="70" y="85" width="170" height="75" rx="8" fill="rgba(52,211,153,0.10)" stroke="rgba(52,211,153,0.35)" stroke-width="1.5"/>
-                    <text x="155" y="112" class="chart-title" text-anchor="middle" fill="#34d399" font-size="15">THETA 1</text>
-                    <text x="155" y="130" class="chart-annotation" text-anchor="middle" font-size="15">High Conviction Side</text>
-                    <text x="155" y="148" fill="#34d399" font-family="Outfit" font-size="14" text-anchor="middle">+ Positive Theta</text>
+                    <text x="155" y="112" class="chart-title" text-anchor="middle" fill="#34d399" font-size="10">THETA 1</text>
+                    <text x="155" y="130" class="chart-annotation" text-anchor="middle" font-size="10">High Conviction Side</text>
+                    <text x="155" y="148" fill="#34d399" font-family="Outfit" font-size="11" text-anchor="middle">+ Positive Theta</text>
                     <line x1="155" y1="160" x2="155" y2="170" stroke="rgba(52,211,153,0.4)" stroke-width="2"/>
                     <!-- Right pan (Theta 2) -->
                     <rect x="320" y="85" width="170" height="75" rx="8" fill="rgba(248,113,113,0.10)" stroke="rgba(248,113,113,0.35)" stroke-width="1.5"/>
-                    <text x="405" y="112" class="chart-title" text-anchor="middle" fill="#f87171" font-size="15">THETA 2</text>
-                    <text x="405" y="130" class="chart-annotation" text-anchor="middle" font-size="15">Upside Potential</text>
-                    <text x="405" y="148" fill="#f87171" font-family="Outfit" font-size="14" text-anchor="middle">- Negative Theta</text>
+                    <text x="405" y="112" class="chart-title" text-anchor="middle" fill="#f87171" font-size="10">THETA 2</text>
+                    <text x="405" y="130" class="chart-annotation" text-anchor="middle" font-size="10">Upside Potential</text>
+                    <text x="405" y="148" fill="#f87171" font-family="Outfit" font-size="11" text-anchor="middle">- Negative Theta</text>
                     <line x1="405" y1="160" x2="405" y2="170" stroke="rgba(248,113,113,0.4)" stroke-width="2"/>
                     <!-- Center label -->
                     <rect x="235" y="25" width="90" height="32" rx="16" fill="rgba(251,191,36,0.15)" stroke="rgba(251,191,36,0.4)" stroke-width="1"/>
-                    <text x="280" y="46" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="700" text-anchor="middle">= 0 NET</text>
+                    <text x="280" y="46" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="700" text-anchor="middle">= 0 NET</text>
                 </svg>
             </div>
             <div class="grid-2">
@@ -846,18 +846,18 @@
                         <!-- Payoff line -->
                         <polyline points="60,165 260,165 460,55" class="chart-line" stroke="white" stroke-width="2.5"/>
                         <!-- Zone labels -->
-                        <text x="155" y="155" fill="#f87171" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">LOSING MONEY</text>
-                        <text x="405" y="100" fill="#34d399" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="155" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="405" y="100" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
                         <!-- Strike marker -->
                         <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
                         <text x="260" y="222" class="chart-annotation" text-anchor="middle">Strike $100</text>
                         <!-- Breakeven marker -->
                         <circle cx="324" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
-                        <text x="324" y="120" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="324" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
                         <!-- Max loss annotation -->
                         <line x1="62" y1="165" x2="62" y2="130" stroke="rgba(248,113,113,0.5)" stroke-width="1.5" marker-start="url(#arrowDown)" marker-end="url(#arrowUp)"/>
-                        <text x="75" y="150" fill="#f87171" font-family="Karla" font-size="12">Max loss =</text>
-                        <text x="75" y="161" fill="#f87171" font-family="Karla" font-size="12">premium paid</text>
+                        <text x="75" y="150" fill="#f87171" font-family="Karla" font-size="10">Max loss =</text>
+                        <text x="75" y="161" fill="#f87171" font-family="Karla" font-size="10">premium paid</text>
                         <!-- Axis labels -->
                         <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                         <text x="110" y="210" class="chart-annotation" text-anchor="middle">$80</text>
@@ -889,17 +889,17 @@
                         <!-- Payoff line -->
                         <polyline points="60,55 260,165 460,165" class="chart-line" stroke="white" stroke-width="2.5"/>
                         <!-- Zone labels -->
-                        <text x="105" y="100" fill="#34d399" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">MAKING MONEY</text>
-                        <text x="365" y="155" fill="#f87171" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="105" y="100" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="365" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
                         <!-- Strike marker -->
                         <line x1="260" y1="130" x2="260" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
                         <text x="260" y="222" class="chart-annotation" text-anchor="middle">Strike $100</text>
                         <!-- Breakeven marker -->
                         <circle cx="196" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
-                        <text x="196" y="120" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="196" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
                         <!-- Max loss annotation -->
-                        <text x="440" y="150" fill="#f87171" font-family="Karla" font-size="12" text-anchor="end">Max loss =</text>
-                        <text x="440" y="161" fill="#f87171" font-family="Karla" font-size="12" text-anchor="end">premium paid</text>
+                        <text x="440" y="150" fill="#f87171" font-family="Karla" font-size="10" text-anchor="end">Max loss =</text>
+                        <text x="440" y="161" fill="#f87171" font-family="Karla" font-size="10" text-anchor="end">premium paid</text>
                         <!-- Axis labels -->
                         <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                         <text x="110" y="210" class="chart-annotation" text-anchor="middle">$80</text>
@@ -931,8 +931,8 @@
                         <!-- Payoff line -->
                         <polyline points="60,165 210,165 360,90 460,90" class="chart-line" stroke="white" stroke-width="2.5"/>
                         <!-- Zone labels -->
-                        <text x="150" y="155" fill="#f87171" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">LOSING MONEY</text>
-                        <text x="385" y="118" fill="#34d399" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="150" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="385" y="118" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
                         <!-- Strike markers -->
                         <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
                         <text x="210" y="222" class="chart-annotation" text-anchor="middle">Long strike</text>
@@ -940,10 +940,10 @@
                         <text x="360" y="222" class="chart-annotation" text-anchor="middle">Short strike</text>
                         <!-- Breakeven marker -->
                         <circle cx="280" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
-                        <text x="280" y="120" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="280" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
                         <!-- Max annotations -->
-                        <text x="75" y="155" fill="#f87171" font-family="Karla" font-size="12">Max loss = debit paid</text>
-                        <text x="445" y="85" fill="#34d399" font-family="Karla" font-size="12" text-anchor="end">Max profit = capped</text>
+                        <text x="75" y="155" fill="#f87171" font-family="Karla" font-size="10">Max loss = debit paid</text>
+                        <text x="445" y="85" fill="#34d399" font-family="Karla" font-size="10" text-anchor="end">Max profit = capped</text>
                         <!-- Axis labels -->
                         <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
@@ -971,8 +971,8 @@
                         <!-- Payoff line -->
                         <polyline points="60,90 210,90 360,165 460,165" class="chart-line" stroke="white" stroke-width="2.5"/>
                         <!-- Zone labels -->
-                        <text x="140" y="118" fill="#34d399" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">MAKING MONEY</text>
-                        <text x="390" y="155" fill="#f87171" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="140" y="118" fill="#34d399" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">MAKING MONEY</text>
+                        <text x="390" y="155" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
                         <!-- Strike markers -->
                         <line x1="210" y1="130" x2="210" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
                         <text x="210" y="222" class="chart-annotation" text-anchor="middle">Long strike</text>
@@ -980,10 +980,10 @@
                         <text x="360" y="222" class="chart-annotation" text-anchor="middle">Short strike</text>
                         <!-- Breakeven marker -->
                         <circle cx="290" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
-                        <text x="290" y="120" fill="#fbbf24" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="290" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
                         <!-- Max annotations -->
-                        <text x="75" y="85" fill="#34d399" font-family="Karla" font-size="12">Max profit = capped</text>
-                        <text x="445" y="155" fill="#f87171" font-family="Karla" font-size="12" text-anchor="end">Max loss = debit paid</text>
+                        <text x="75" y="85" fill="#34d399" font-family="Karla" font-size="10">Max profit = capped</text>
+                        <text x="445" y="155" fill="#f87171" font-family="Karla" font-size="10" text-anchor="end">Max loss = debit paid</text>
                         <!-- Axis labels -->
                         <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
@@ -1013,9 +1013,9 @@
                         <!-- Payoff line -->
                         <polyline points="60,70 180,170 340,170 460,70" class="chart-line" stroke="white" stroke-width="2.5"/>
                         <!-- Zone labels -->
-                        <text x="80" y="105" fill="#34d399" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">PROFIT</text>
-                        <text x="260" y="158" fill="#f87171" font-family="Outfit" font-size="14" font-weight="600" text-anchor="middle">LOSING MONEY</text>
-                        <text x="438" y="105" fill="#34d399" font-family="Outfit" font-size="15" font-weight="600" text-anchor="middle">PROFIT</text>
+                        <text x="80" y="105" fill="#34d399" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">PROFIT</text>
+                        <text x="260" y="158" fill="#f87171" font-family="Outfit" font-size="11" font-weight="600" text-anchor="middle">LOSING MONEY</text>
+                        <text x="438" y="105" fill="#34d399" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">PROFIT</text>
                         <!-- Strike markers -->
                         <line x1="180" y1="130" x2="180" y2="210" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,3"/>
                         <text x="180" y="222" class="chart-annotation" text-anchor="middle">Put strike</text>
@@ -1024,10 +1024,10 @@
                         <!-- Breakeven markers -->
                         <circle cx="132" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
                         <circle cx="388" cy="130" r="5" fill="#fbbf24" stroke="#0c1221" stroke-width="2"/>
-                        <text x="132" y="120" fill="#fbbf24" font-family="Outfit" font-size="12" font-weight="600" text-anchor="middle">BREAKEVEN</text>
-                        <text x="388" y="120" fill="#fbbf24" font-family="Outfit" font-size="12" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="132" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
+                        <text x="388" y="120" fill="#fbbf24" font-family="Outfit" font-size="10" font-weight="600" text-anchor="middle">BREAKEVEN</text>
                         <!-- Max loss annotation -->
-                        <text x="260" y="172" fill="#f87171" font-family="Karla" font-size="12" text-anchor="middle">Max loss = both premiums</text>
+                        <text x="260" y="172" fill="#f87171" font-family="Karla" font-size="10" text-anchor="middle">Max loss = both premiums</text>
                         <!-- Axis labels -->
                         <text x="260" y="245" class="chart-annotation" text-anchor="middle">Stock Price at Expiration</text>
                     </svg>
