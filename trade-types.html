@@ -290,12 +290,19 @@
     <h1>Capitol Gains Trade Types</h1>
     <p class="subtitle">A Complete Guide to Options Strategies</p>
 
+    <!-- Approval Level -->
+    <div class="card yellow fade-in">
+        <div class="card-title">Options Approval: What You Need</div>
+        <p>To follow all Capitol Gains trades, you&rsquo;ll need <strong>Level 3 options approval</strong> (sometimes called &ldquo;Spreads&rdquo; or &ldquo;Multi-leg&rdquo;) from your broker. This lets you trade spreads, calendars, and diagonals. If you only have Level 2, you can still trade simple calls and puts. Every broker names their levels a little differently &mdash; call yours and ask for spread trading access if you don&rsquo;t have it yet.</p>
+    </div>
+
     <!-- Table of Contents -->
     <nav class="toc fade-in">
         <h3>Contents</h3>
         <ul>
-            <li><a href="#philosophy">The Core Philosophy</a></li>
             <li><a href="#theta">What is Theta?</a></li>
+            <li><a href="#philosophy">The Core Philosophy</a></li>
+            <li><a href="#key">Reading the Trade Alerts</a></li>
             <li><a href="#strikes">Strike Selection</a></li>
             <li><a href="#expirations">Expiration Selection</a></li>
             <li><a href="#volatility">Understanding Volatility</a></li>
@@ -305,25 +312,7 @@
         </ul>
     </nav>
 
-    <!-- The Core Philosophy -->
-    <section id="philosophy" class="fade-in">
-        <h2>The Core Philosophy</h2>
-        <p>Every Capitol Gains trade is designed with two legs that balance each other:</p>
-        <div class="grid-2">
-            <div class="card green">
-                <div class="card-title">Theta 1</div>
-                <p>The high-conviction side, where the team expects the stock to move in a specific direction.</p>
-            </div>
-            <div class="card">
-                <div class="card-title">Theta 2</div>
-                <p>The upside potential side, which can produce bonus gains if the stock really runs.</p>
-            </div>
-        </div>
-        <p>The goal is to combine these two sides so that <strong>theta equals zero</strong>.</p>
-        <a href="#top" class="back-link">&#8593; Go to top</a>
-    </section>
-
-    <!-- What is Theta? -->
+    <!-- What is Theta? (moved BEFORE philosophy) -->
     <section id="theta" class="fade-in">
         <h2>What is Theta?</h2>
         <p>Theta is the daily cost of holding an option &mdash; think of it like rent you pay every day just to stay in the trade.</p>
@@ -339,7 +328,54 @@
         </div>
         <div class="card yellow">
             <div class="card-title">Zero Theta = Living Rent-Free</div>
-            <p>When the rent you&rsquo;re paying on one side equals the rent you&rsquo;re collecting on the other, you can hold the position as long as you need without time decay eating into your profits. You&rsquo;re waiting for your trade thesis to play out &mdash; on the house.</p>
+            <p>When the rent you&rsquo;re paying on one side equals the rent you&rsquo;re collecting on the other, you can hold the position as long as you need without time decay eating into your profits. You&rsquo;re waiting for your trade idea to play out &mdash; on the house.</p>
+        </div>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- The Core Philosophy (now comes AFTER theta is explained) -->
+    <section id="philosophy" class="fade-in">
+        <h2>The Core Philosophy</h2>
+        <p>Now that you know what theta is, here&rsquo;s how Capitol Gains uses it.</p>
+        <p>Every Capitol Gains trade is built with two parts (called &ldquo;legs&rdquo; in options lingo) that balance each other:</p>
+        <div class="grid-2">
+            <div class="card green">
+                <div class="card-title">Theta 1</div>
+                <p>The high-confidence side &mdash; where the team feels strongest about the stock moving in a certain direction.</p>
+            </div>
+            <div class="card">
+                <div class="card-title">Theta 2</div>
+                <p>The bonus side &mdash; this part can make extra money if the stock makes a really big move.</p>
+            </div>
+        </div>
+        <p>The goal is to combine these two parts so that <strong>theta equals zero</strong> &mdash; meaning time decay doesn&rsquo;t cost you anything while you wait.</p>
+        <a href="#top" class="back-link">&#8593; Go to top</a>
+    </section>
+
+    <!-- Reading the Trade Alerts (Quick Key) -->
+    <section id="key" class="fade-in">
+        <h2>Reading the Trade Alerts</h2>
+        <p>When you see a Capitol Gains trade alert, it uses shorthand. Here&rsquo;s what everything means:</p>
+
+        <h3>Trade Shorthand</h3>
+        <div class="grid-2">
+            <div class="card"><div class="card-title">+C</div><p>Buy a Call (you pay to open the trade)</p></div>
+            <div class="card"><div class="card-title">-C</div><p>Sell a Call (you collect money to open the trade)</p></div>
+            <div class="card"><div class="card-title">+P</div><p>Buy a Put (you pay to open the trade)</p></div>
+            <div class="card"><div class="card-title">-P</div><p>Sell a Put (you collect money to open the trade)</p></div>
+        </div>
+
+        <h3>Key Terms</h3>
+        <div class="card"><div class="card-title">Premium</div><p>The price of an option &mdash; what you pay to buy one, or what you collect when you sell one. Think of it like a ticket price.</p></div>
+        <div class="card"><div class="card-title">Debit vs. Credit</div><p><strong>Debit</strong> = a trade where you pay money up front (you spend now, hoping to make more later). <strong>Credit</strong> = a trade where you collect money up front (you get paid now, hoping the trade stays in your favor).</p></div>
+        <div class="card"><div class="card-title">Buy-to-Open (BTO) &amp; Sell-to-Open (STO)</div><p><strong>Buy-to-open</strong> means you&rsquo;re starting a new trade by buying an option. <strong>Sell-to-open</strong> means you&rsquo;re starting a new trade by selling an option. These are the &ldquo;opening&rdquo; orders you&rsquo;ll place with your broker.</p></div>
+
+        <h3>Theta Labels on Trades</h3>
+        <p>Each trade type has a theta label that tells you how time decay affects it:</p>
+        <div class="grid-3">
+            <div class="card green"><div class="card-title">Bullish Theta</div><p>Time is on your side. Each day that passes, you make a little money from decay.</p></div>
+            <div class="card red"><div class="card-title">Bearish Theta</div><p>Time works against you. Each day that passes, you lose a little money from decay.</p></div>
+            <div class="card yellow"><div class="card-title">Zero Theta</div><p>Balanced &mdash; time passing doesn&rsquo;t help or hurt you.</p></div>
         </div>
         <a href="#top" class="back-link">&#8593; Go to top</a>
     </section>
@@ -347,31 +383,31 @@
     <!-- Strike Selection -->
     <section id="strikes" class="fade-in">
         <h2>Strike Selection &mdash; Where to Place Your Bets</h2>
-        <p>Options come in three flavors based on where their &ldquo;strike price&rdquo; sits relative to the current stock price:</p>
+        <p>Every option has a &ldquo;strike price&rdquo; &mdash; the price you&rsquo;re betting the stock will be above (for calls) or below (for puts). Options come in three types based on where the strike sits compared to the stock&rsquo;s current price:</p>
         <div class="grid-3">
             <div class="card">
                 <div class="card-title">At-the-Money (ATM)</div>
                 <p>The strike price is right at or very close to where the stock is trading now.</p>
                 <div class="example"><i>Stock is at $100, you buy the $100 call.</i></div>
-                <p>ATM options have the <strong>highest raw dollar theta</strong> because they&rsquo;re sitting at maximum uncertainty.</p>
+                <p>ATM options have the <strong>most theta in dollar terms</strong> because the market is most unsure about what&rsquo;ll happen next.</p>
             </div>
             <div class="card">
                 <div class="card-title">In-the-Money (ITM)</div>
                 <p>The option already has real value built in.</p>
                 <div class="example"><i>Stock is at $100, you buy the $90 call. That call is worth at least $10 right now.</i></div>
-                <p>ITM options have the <strong>smallest theta relative to what you paid</strong>. They decay slower as a percentage.</p>
+                <p>ITM options have the <strong>smallest theta compared to what you paid</strong>. They lose value slower as a percentage of their price.</p>
             </div>
             <div class="card">
                 <div class="card-title">Out-of-the-Money (OTM)</div>
-                <p>The option has no real value yet &mdash; purely a bet on future movement.</p>
+                <p>The option has no real value yet &mdash; it&rsquo;s all hope, no built-in value. Just a bet the stock will move.</p>
                 <div class="example"><i>Stock is at $100, you buy the $110 call. Worthless unless stock climbs above $110.</i></div>
-                <p>OTM options have <strong>massive theta relative to their price</strong>. They decay fast percentage-wise.</p>
+                <p>OTM options have <strong>huge theta compared to what you paid</strong>. They lose value fast.</p>
             </div>
         </div>
         <h3>The Decay Hierarchy</h3>
         <div class="hierarchy">
             <strong>For Calls:</strong> ITM &gt; ATM &gt; OTM &nbsp;&nbsp;(ITM decays slowest, OTM decays fastest as %)<br>
-            <strong>For Puts:</strong> OTM &gt; ATM &gt; ITM &nbsp;&nbsp;(reversed because put values work opposite)
+            <strong>For Puts:</strong> OTM &gt; ATM &gt; ITM &nbsp;&nbsp;(reversed because put values work the other way)
         </div>
         <a href="#top" class="back-link">&#8593; Go to top</a>
     </section>
@@ -383,11 +419,11 @@
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">Near-Term Expirations</div>
-                <p>Days to a few weeks out. Have the <strong>most theta</strong>. Time decay accelerates dramatically as expiration approaches &mdash; like a candle burning faster as it gets shorter.</p>
+                <p>Days to a few weeks out. Have the <strong>most theta</strong>. Time decay speeds up fast as expiration gets closer &mdash; like a candle burning faster as it gets shorter.</p>
             </div>
             <div class="card">
                 <div class="card-title">Far-Term Expirations</div>
-                <p>Months out. Have the <strong>least theta</strong>. The decay is gentler because there&rsquo;s still plenty of time for things to happen.</p>
+                <p>Months out. Have the <strong>least theta</strong>. The decay is gentle because there&rsquo;s still plenty of time for things to happen.</p>
             </div>
         </div>
         <div class="metaphor">Think of it like buying milk. Milk expiring tomorrow is practically worthless at the store. Milk expiring in two weeks still has most of its value. Options work the same way.</div>
@@ -401,7 +437,7 @@
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">Implied Volatility (IV)</div>
-                <p>What the options market <strong>expects</strong> to happen. High IV means options are expensive because traders are pricing in big moves. Low IV means options are cheap.</p>
+                <p>What the options market <strong>expects</strong> to happen. High IV means options are expensive because traders are expecting big moves. Low IV means options are cheap.</p>
                 <div class="metaphor">Think of IV as the <strong>weather forecast</strong>. It&rsquo;s what people think will happen.</div>
             </div>
             <div class="card">
@@ -410,7 +446,7 @@
                 <div class="metaphor">Think of RV as the <strong>actual weather</strong>. It&rsquo;s what&rsquo;s happening outside your window right now.</div>
             </div>
         </div>
-        <p>The relationship between these two drives trade selection.</p>
+        <p>The relationship between these two tells us which trades to use.</p>
         <a href="#top" class="back-link">&#8593; Go to top</a>
     </section>
 
@@ -429,20 +465,20 @@
                 <tbody>
                     <tr>
                         <td><strong>High RV</strong><br>(stock moving)</td>
-                        <td><strong>Buy Options</strong><br>Bearish Theta<br><i>Stock is moving, capture it</i></td>
-                        <td><strong>Buy Options</strong><br>Bearish Theta<br><i>Cheap + moving = ideal</i></td>
+                        <td><strong>Buy Options</strong><br>Bearish Theta (time works against you)<br><i>Stock is moving, capture it</i></td>
+                        <td><strong>Buy Options</strong><br>Bearish Theta (time works against you)<br><i>Cheap + moving = ideal</i></td>
                     </tr>
                     <tr>
                         <td><strong>Low RV</strong><br>(stock quiet)</td>
-                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta<br><i>Don&rsquo;t pay inflated rent</i></td>
-                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta<br><i>Structure for patience</i></td>
+                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta (time on your side)<br><i>Don&rsquo;t pay inflated rent</i></td>
+                        <td><strong>Zero Theta Spreads</strong><br>0 to Bullish Theta (time on your side)<br><i>Set up and be patient</i></td>
                     </tr>
                 </tbody>
             </table>
         </figure>
         <div class="card highlight">
             <div class="card-title">The Key Insight</div>
-            <p>When a stock is actually moving (high RV), own options to capture that movement. When options are expensive but the stock is quiet (high IV, low RV), use balanced spreads so you&rsquo;re not paying inflated daily rent while waiting.</p>
+            <p>When a stock is actually moving (high RV), own options to ride that movement. When options are expensive but the stock is quiet (high IV, low RV), use balanced spreads so you&rsquo;re not paying inflated daily rent while waiting.</p>
         </div>
         <a href="#top" class="back-link">&#8593; Go to top</a>
     </section>
@@ -456,61 +492,68 @@
         <div class="trade-card">
             <h4>Long Calls (Bull Calls)</h4>
             <div class="specs">
-                <span class="spec-tag">+C</span>
+                <span class="spec-tag">+C (buy a call)</span>
+                <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: High RV, Low IV</span>
+                <span class="spec-tag">Approval: Level 2</span>
             </div>
-            <p><strong>What it is:</strong> Simply buying a call option &mdash; a bet the stock will go up.</p>
-            <div class="metaphor">You&rsquo;re buying a lottery ticket, but one where the drawing happens every day and the stock&rsquo;s movement determines if you win. You want cheap tickets (low IV) on a game that&rsquo;s actually paying out frequently (high RV).</div>
+            <p><strong>What it is:</strong> Simply buying a call option &mdash; a bet the stock will go up. If the stock rises above your strike price, the call becomes more valuable. If it doesn&rsquo;t, you lose the premium (the price you paid).</p>
+            <div class="metaphor">You&rsquo;re buying a lottery ticket, but one where the drawing happens every day and the stock&rsquo;s movement determines if you win. You want cheap tickets (low IV) on a game that&rsquo;s actually paying out often (high RV).</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 MSFT Jan 26 $420 Call for $8.50 (no more than $9.00)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Long Puts (Bear Puts)</h4>
             <div class="specs">
-                <span class="spec-tag">+P</span>
+                <span class="spec-tag">+P (buy a put)</span>
+                <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: High RV, Low IV</span>
+                <span class="spec-tag">Approval: Level 2</span>
             </div>
-            <p><strong>What it is:</strong> Buying a put option &mdash; a bet the stock will go down.</p>
-            <div class="metaphor">Same as above, just betting on the other direction.</div>
+            <p><strong>What it is:</strong> Buying a put option &mdash; a bet the stock will go down. If the stock drops below your strike price, the put becomes more valuable. If it doesn&rsquo;t, you lose the premium.</p>
+            <div class="metaphor">Think of it like buying insurance on a stock you think is going to crash. You pay a small amount up front (the premium), and if the stock tanks, your insurance pays off. If nothing bad happens, you just lose the cost of the insurance.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 TSLA Feb 21 $350 Put for $12.00 (no more than $12.50)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Long Call Spreads (Bull Call Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">+C, -C</span>
+                <span class="spec-tag">+C, -C (buy a call, sell a call)</span>
                 <span class="spec-tag">Zero Theta</span>
                 <span class="spec-tag">Best when: Higher IV</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy an ITM call, sell an OTM call at a higher strike. Both same expiration.</p>
-            <p><strong>How it works:</strong> You&rsquo;re buying the right to profit if the stock goes up, but you&rsquo;re capping your upside by selling a call above. The short strike is your destination &mdash; that&rsquo;s where maximum profit occurs.</p>
-            <div class="metaphor">You&rsquo;re buying a ticket to a concert (the long call), but you&rsquo;re selling the backstage pass rights (the short call) to offset the cost. You get to enjoy the show up to a point, but you&rsquo;ve given up the chance for the ultimate VIP experience.</div>
-            <div class="example"><i>Stock at $100. Buy the $95 call, sell the $105 call. You profit as the stock rises toward $105, with max profit at $105 or above. Your cost is reduced because you sold that $105 call.</i></div>
+            <p><strong>How it works:</strong> You&rsquo;re buying the right to profit if the stock goes up, but you&rsquo;re capping how much you can make by selling a call above. The short strike is your target &mdash; that&rsquo;s where your max profit happens.</p>
+            <div class="metaphor">You&rsquo;re buying a ticket to a concert (the long call), but you&rsquo;re selling the backstage pass rights (the short call) to make the ticket cheaper. You get to enjoy the show up to a point, but you&rsquo;ve given up the chance for the ultimate VIP experience.</div>
+            <div class="example"><i>Stock at $100. Buy the $95 call, sell the $105 call. You profit as the stock rises toward $105, with max profit at $105 or above. Your cost is lower because you sold that $105 call.</i></div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 AAPL Mar 21 $220 Call for $12.00</i><br><i>Sell-to-open 1 AAPL Mar 21 $235 Call for $5.50</i><br><i>Net debit: $6.50 (no more than $7.00)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Short Call Spreads (Bear Call Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">-C, +C</span>
+                <span class="spec-tag">-C, +C (sell a call, buy a call)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock flat or down</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Sell an ITM call, buy an OTM call at a higher strike. The reverse of above.</p>
-            <p><strong>How it works:</strong> You&rsquo;re collecting premium by selling a call and buying a cheaper one above as protection. The short strike is your destination &mdash; you want the stock at or below that level at expiration.</p>
-            <div class="metaphor">You&rsquo;re the casino now. You&rsquo;re betting the stock won&rsquo;t go up much, collecting premium from someone who thinks it will. The long call is your insurance policy capping your losses if you&rsquo;re wrong.</div>
+            <p><strong>How it works:</strong> You collect money up front by selling a call, and buy a cheaper one above as protection. The short strike is your target &mdash; you want the stock at or below that level when the options expire.</p>
+            <div class="metaphor">You&rsquo;re the casino now. You&rsquo;re betting the stock won&rsquo;t go up much, collecting money from someone who thinks it will. The long call is your insurance policy that caps your losses if you&rsquo;re wrong.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 NVDA Feb 21 $140 Call for $8.00</i><br><i>Buy-to-open 1 NVDA Feb 21 $150 Call for $4.00</i><br><i>Net credit: $4.00 (no less than $3.75)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Long Put Spreads (Bear Put Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">+P, -P</span>
+                <span class="spec-tag">+P, -P (buy a put, sell a put)</span>
                 <span class="spec-tag">Bearish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock falling</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy an ITM put, sell an OTM put at a lower strike.</p>
-            <p><strong>How it works:</strong> You&rsquo;re betting on a decline but capping your profit at the short strike. The short strike is your destination.</p>
+            <p><strong>How it works:</strong> You&rsquo;re betting on a decline but capping your profit at the short strike. The short strike is your target.</p>
             <div class="metaphor">You&rsquo;re buying home insurance (the long put) but agreeing that you&rsquo;ll only be covered down to a certain damage level (the short put). Cheaper than full coverage, but limited protection.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 META Mar 21 $580 Put for $18.00</i><br><i>Sell-to-open 1 META Mar 21 $560 Put for $11.00</i><br><i>Net debit: $7.00 (no more than $7.50)</i></div>
         </div>
@@ -518,26 +561,29 @@
         <div class="trade-card">
             <h4>Short Put Spreads (Bull Put Spreads)</h4>
             <div class="specs">
-                <span class="spec-tag">-P, +P</span>
+                <span class="spec-tag">-P, +P (sell a put, buy a put)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: Higher IV, stock flat or rising</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Sell an ITM put, buy an OTM put at a lower strike.</p>
-            <p><strong>How it works:</strong> You&rsquo;re collecting premium betting the stock won&rsquo;t fall much. The long put below is your safety net.</p>
+            <p><strong>How it works:</strong> You collect money up front by betting the stock won&rsquo;t fall much. The long put below is your safety net that limits how much you can lose.</p>
+            <div class="metaphor">A friend says, &ldquo;I bet you $350 this stock won&rsquo;t drop below $190.&rdquo; If you&rsquo;re right and it stays above $190, you keep the $350. If you&rsquo;re wrong, you owe them &mdash; but the safety net (long put) caps how much.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 GOOGL Feb 21 $190 Put for $6.50</i><br><i>Buy-to-open 1 GOOGL Feb 21 $180 Put for $3.00</i><br><i>Net credit: $3.50 (no less than $3.25)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Cash-Secured Puts</h4>
             <div class="specs">
-                <span class="spec-tag">-P</span>
+                <span class="spec-tag">-P (sell a put)</span>
                 <span class="spec-tag">Bullish Theta</span>
                 <span class="spec-tag">Best when: High probability, Higher IV</span>
+                <span class="spec-tag">Approval: Level 2</span>
             </div>
-            <p><strong>What it is:</strong> Selling an OTM put without any offsetting position &mdash; you&rsquo;re naked but you have the cash to buy shares if assigned.</p>
-            <p><strong>How it works:</strong> You sell a put below the current stock price, collecting premium. If the stock stays above your strike, you keep the premium. If it falls below, you&rsquo;re obligated to buy shares at that strike &mdash; but you wanted to own them anyway at that price.</p>
+            <p><strong>What it is:</strong> Selling a put on its own, without another option to go with it. You keep enough cash in your account to buy the shares if the stock drops below your strike and your broker makes you follow through (this is called &ldquo;getting assigned&rdquo;).</p>
+            <p><strong>How it works:</strong> You sell a put below the current stock price, collecting the premium. If the stock stays above your strike, you keep the money. If it falls below, you&rsquo;re required to buy the shares at that strike &mdash; but you wanted to own them at that price anyway.</p>
             <div class="metaphor">You&rsquo;re getting paid to put in a limit order. Someone pays you to agree that you&rsquo;ll buy their stock if it drops to a certain price. If it never gets there, you just pocket the payment.</div>
-            <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 AMD Jan 17 $120 Put for $3.20 (no less than $3.00)</i><br><i>(Secure with $12,000 cash in account)</i></div>
+            <div class="example"><strong>Example Trade:</strong><br><i>Sell-to-open 1 AMD Jan 17 $120 Put for $3.20 (no less than $3.00)</i><br><i>(Keep $12,000 cash in your account to cover the purchase)</i></div>
         </div>
 
         <div class="trade-card">
@@ -545,10 +591,11 @@
             <div class="specs">
                 <span class="spec-tag">+C, -C (diff. expirations)</span>
                 <span class="spec-tag">Bullish Theta</span>
-                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+                <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy a longer-dated call, sell a shorter-dated call at the same strike.</p>
-            <p><strong>How it works:</strong> The near-term option you sold decays faster than the far-term option you bought. You&rsquo;re profiting from the difference in decay rates. The strike is your destination &mdash; you want the stock to land right there at the short option&rsquo;s expiration.</p>
+            <p><strong>How it works:</strong> The near-term option you sold loses value faster than the far-term option you bought. You make money from that difference. The strike is your target &mdash; you want the stock to land right there when the short option expires.</p>
             <div class="metaphor">You&rsquo;re renting out a room in your house to cover your mortgage. The rent (short-term theta collection) pays for your cost of ownership (long-term theta payment). As long as the tenant stays (stock stays near the strike), you&rsquo;re in good shape.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 AMZN Mar 21 $230 Call for $9.50</i><br><i>Sell-to-open 1 AMZN Feb 21 $230 Call for $5.00</i><br><i>Net debit: $4.50 (no more than $5.00)</i></div>
         </div>
@@ -558,10 +605,12 @@
             <div class="specs">
                 <span class="spec-tag">+P, -P (diff. expirations)</span>
                 <span class="spec-tag">Bullish Theta</span>
-                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+                <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy a longer-dated put, sell a shorter-dated put at the same strike.</p>
-            <p><strong>How it works:</strong> Same concept as call calendars, just using puts. Often used when you have a bearish lean but want to structure it efficiently.</p>
+            <p><strong>How it works:</strong> Same idea as a call calendar, but with puts. The near-term put you sold loses value faster than the far-term put you bought &mdash; you keep the difference. This works well when you think a stock might drop over time but want to collect some income while you wait.</p>
+            <div class="metaphor">Picture a farmer who owns land (the longer-dated put) and rents it out for one growing season at a time (the shorter-dated put). Each season&rsquo;s rent helps pay for the land, and you still own it when the lease is up.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 SPY Mar 21 $580 Put for $11.00</i><br><i>Sell-to-open 1 SPY Feb 21 $580 Put for $6.00</i><br><i>Net debit: $5.00 (no more than $5.50)</i></div>
         </div>
 
@@ -570,11 +619,12 @@
             <div class="specs">
                 <span class="spec-tag">+C, -C (diff. exp. &amp; strikes)</span>
                 <span class="spec-tag">Bullish Theta</span>
-                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+                <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy a longer-dated ITM call, sell a shorter-dated OTM call.</p>
-            <p><strong>How it works:</strong> Combines the calendar concept (different expirations) with a spread concept (different strikes). You own a solid ITM call that decays slowly, and you&rsquo;re selling faster-decaying OTM calls against it over time.</p>
-            <div class="metaphor">You own a rental property (the long-dated ITM call) and you&rsquo;re running it as an Airbnb (selling short-term OTM calls repeatedly). The property has lasting value, and you generate income from short-term rentals.</div>
+            <p><strong>How it works:</strong> This mixes two ideas: different expirations (like a calendar) and different strikes (like a spread). You own a solid ITM call that loses value slowly, and you sell faster-decaying OTM calls against it to collect income over time.</p>
+            <div class="metaphor">You own a rental property (the long-dated ITM call) and you&rsquo;re running it as an Airbnb (selling short-term OTM calls over and over). The property has lasting value, and you bring in income from short-term guests.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 MSFT Apr 17 $400 Call for $28.00</i><br><i>Sell-to-open 1 MSFT Feb 21 $430 Call for $8.00</i><br><i>Net debit: $20.00 (no more than $21.00)</i></div>
         </div>
 
@@ -583,22 +633,25 @@
             <div class="specs">
                 <span class="spec-tag">+P, -P (diff. exp. &amp; strikes)</span>
                 <span class="spec-tag">Bullish Theta</span>
-                <span class="spec-tag">Best when: Higher Theta, Horizontal Vol Skew</span>
+                <span class="spec-tag">Best when: Near-term options priced higher than far-term</span>
+                <span class="spec-tag">Approval: Level 3</span>
             </div>
             <p><strong>What it is:</strong> Buy a longer-dated OTM put, sell a shorter-dated ITM put.</p>
-            <p><strong>How it works:</strong> Same diagonal concept applied to puts.</p>
+            <p><strong>How it works:</strong> You own a longer-dated put as your base position and sell a shorter-dated, closer-to-the-money put to collect income. As the short put loses value over time, you keep that money. If the stock drops, your longer-dated put gains value too.</p>
+            <div class="metaphor">Think of it like owning a piece of land (the long-dated put) and leasing it out season by season (the short-dated put). You earn rent while holding the land for its long-term value.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 QQQ Apr 17 $480 Put for $15.00</i><br><i>Sell-to-open 1 QQQ Feb 21 $500 Put for $8.50</i><br><i>Net debit: $6.50 (no more than $7.00)</i></div>
         </div>
 
         <div class="trade-card">
             <h4>Long Strangles</h4>
             <div class="specs">
-                <span class="spec-tag">+C, +P</span>
+                <span class="spec-tag">+C, +P (buy a call and a put)</span>
                 <span class="spec-tag">Bearish Theta</span>
-                <span class="spec-tag">Best when: Higher Realized Volatility expected</span>
+                <span class="spec-tag">Best when: Expecting a big move in either direction</span>
+                <span class="spec-tag">Approval: Level 2</span>
             </div>
             <p><strong>What it is:</strong> Buy an OTM call AND buy an OTM put at the same expiration.</p>
-            <p><strong>How it works:</strong> You win if the stock moves significantly in either direction. You lose if it sits still because both options decay.</p>
+            <p><strong>How it works:</strong> You win if the stock moves a lot in either direction. You lose if it sits still, because both options lose value over time.</p>
             <div class="metaphor">You&rsquo;re betting on a storm without knowing if it&rsquo;ll be a hurricane or a blizzard. You&rsquo;ve bought both an umbrella and a snow shovel. If the weather stays mild, you wasted money on both. If something big happens either way, one of them pays off big.</div>
             <div class="example"><strong>Example Trade:</strong><br><i>Buy-to-open 1 NFLX Feb 21 $950 Call for $22.00</i><br><i>Buy-to-open 1 NFLX Feb 21 $850 Put for $18.00</i><br><i>Total debit: $40.00 (no more than $42.00)</i></div>
         </div>
@@ -758,7 +811,7 @@
             </div>
             <div class="card yellow">
                 <div class="card-title">The Capitol Gains Edge</div>
-                <p>By combining buys and sells that cancel each other&rsquo;s theta, you can <strong>hold as long as you need</strong> without time decay eating into your position. You&rsquo;re living rent-free while waiting for your thesis to play out.</p>
+                <p>By combining buys and sells that cancel each other&rsquo;s theta, you can <strong>hold as long as you need</strong> without time decay eating into your position. You&rsquo;re living rent-free while waiting for your trade idea to play out.</p>
             </div>
         </div>
 
@@ -941,7 +994,7 @@
         <div class="card"><p><strong>Uncertain direction but certain something big is coming</strong> &rarr; Strangles, pay for the optionality</p></div>
         <div class="card yellow">
             <div class="card-title">The Bottom Line</div>
-            <p>The zero-theta design means the team isn&rsquo;t fighting time decay while waiting for their thesis to play out. They&rsquo;re structured to wait as long as needed &mdash; which is a significant edge when you have high conviction about where a stock is headed but can&rsquo;t predict exactly when it&rsquo;ll get there.</p>
+            <p>The zero-theta design means the team isn&rsquo;t fighting time decay while waiting for their trade idea to play out. They&rsquo;re set up to wait as long as they need &mdash; which is a big advantage when you feel strongly about where a stock is headed but can&rsquo;t predict exactly when it&rsquo;ll get there.</p>
         </div>
         <a href="#top" class="back-link">&#8593; Go to top</a>
     </section>
